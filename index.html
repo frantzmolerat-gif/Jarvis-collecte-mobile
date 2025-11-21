@@ -123,6 +123,13 @@
       font-size: 0.75rem;
       color: #6b7280;
     }
+    .preview img {
+      display: block;
+      margin-top: 4px;
+      max-width: 100%;
+      border-radius: 6px;
+      border: 1px solid #e5e7eb;
+    }
 
     .badge {
       display: inline-flex;
@@ -220,6 +227,8 @@
       background: transparent;
       border: 1px solid #d1d5db;
       color: #111827;
+      padding: 6px 10px;
+      font-size: 0.8rem;
     }
 
     footer {
@@ -288,6 +297,11 @@
         <small>Permet une vérification visuelle de l’état général.</small>
         <div class="file-input">
           <input type="file" id="photoFace" accept="image/*" capture="environment">
+          <div class="buttons" style="margin-top:8px;">
+            <button type="button" class="outline" id="btnFaceDemo">
+              Utiliser une photo de test
+            </button>
+          </div>
           <div class="preview" id="previewFace">Aucune photo sélectionnée.</div>
         </div>
       </div>
@@ -297,6 +311,11 @@
         <small>C’est cette photo qui servira à lire le numéro et les infos produit.</small>
         <div class="file-input">
           <input type="file" id="photoEtiquette" accept="image/*" capture="environment">
+          <div class="buttons" style="margin-top:8px;">
+            <button type="button" class="outline" id="btnEtiquetteDemo">
+              Utiliser une photo de test
+            </button>
+          </div>
           <div class="preview" id="previewEtiquette">Aucune photo sélectionnée.</div>
         </div>
       </div>
@@ -310,7 +329,7 @@
         </button>
       </div>
       <div id="analyseError" class="error-text" style="display:none;">
-        Merci de sélectionner les deux photos avant de lancer l’analyse.
+        Merci de sélectionner les deux photos (ou photos de test) avant de lancer l’analyse.
       </div>
     </section>
 
@@ -477,6 +496,9 @@
   const photoEtiquetteInput = document.getElementById("photoEtiquette");
   const previewFace = document.getElementById("previewFace");
   const previewEtiquette = document.getElementById("previewEtiquette");
+  const btnFaceDemo = document.getElementById("btnFaceDemo");
+  const btnEtiquetteDemo = document.getElementById("btnEtiquetteDemo");
+
   const btnStep2Back = document.getElementById("btn-step-2-back");
   const btnAnalyse = document.getElementById("btn-analyse");
   const analyseError = document.getElementById("analyseError");
@@ -501,7 +523,6 @@
   const motifRefusField = document.getElementById("motifRefusField");
   const motifRefusInput = document.getElementById("motifRefus");
 
-  // Utilitaires
   function goToStep(stepIndex) {
     step1.classList.remove("active");
     step2.classList.remove("active");
@@ -523,7 +544,7 @@
   }
 
   function padLeft(numStr, length) {
-    let s = String(numStr).replace(/\D/g, ""); // ne garder que les chiffres
+    let s = String(numStr).replace(/\D/g, "");
     while (s.length < length) {
       s = "0" + s;
     }
@@ -546,7 +567,14 @@
     state.numTracaComplet = full;
   }
 
-  // Listeners – STEP 1
+  function updateAnalyseButton() {
+    const hasFace = !!state.photoFace;
+    const hasEtiquette = !!state.photoEtiquette;
+    btnAnalyse.disabled = !(hasFace && hasEtiquette);
+    analyseError.style.display = "none";
+  }
+
+  // STEP 1
   pointCollecteSelect.addEventListener("change", () => {
     state.pointCollecte = pointCollecteSelect.value;
     btnStep1Next.disabled = !state.pointCollecte;
@@ -557,7 +585,7 @@
     goToStep(2);
   });
 
-  // Listeners – STEP 2
+  // STEP 2 – fichiers & photos de test
   function handleFileChange(input, previewElement, key) {
     const file = input.files[0];
     if (!file) {
@@ -565,11 +593,9 @@
       state[key] = null;
     } else {
       state[key] = file;
-      previewElement.textContent = "Photo sélectionnée : " + file.name;
+      previewElement.innerHTML = "Photo sélectionnée : " + file.name;
     }
-    // Activer le bouton analyse seulement si les deux photos sont là
-    btnAnalyse.disabled = !(state.photoFace && state.photoEtiquette);
-    analyseError.style.display = "none";
+    updateAnalyseButton();
   }
 
   photoFaceInput.addEventListener("change", () => {
@@ -578,6 +604,21 @@
 
   photoEtiquetteInput.addEventListener("change", () => {
     handleFileChange(photoEtiquetteInput, previewEtiquette, "photoEtiquette");
+  });
+
+  btnFaceDemo.addEventListener("click", () => {
+    // On considère une "pseudo photo" pour la démo
+    state.photoFace = "_demo_face_";
+    previewFace.innerHTML = 'Photo de test utilisée : face-test.jpg' +
+      '<img src="photos-tests/face-test.jpg" alt="Photo face avant test">';
+    updateAnalyseButton();
+  });
+
+  btnEtiquetteDemo.addEventListener("click", () => {
+    state.photoEtiquette = "_demo_etiquette_";
+    previewEtiquette.innerHTML = 'Photo de test utilisée : etiquette-test.jpg' +
+      '<img src="photos-tests/etiquette-test.jpg" alt="Photo étiquette test">';
+    updateAnalyseButton();
   });
 
   btnStep2Back.addEventListener("click", () => {
@@ -589,14 +630,10 @@
       analyseError.style.display = "block";
       return;
     }
-    // Ici, en phase 2, on branchera l’appel API OCR + Jarvis.
-    // Pour l’instant, on simule seulement le fait que le numéro n’est pas lu
-    // et on affiche un gabarit propre pour saisie + typologie.
 
-    // Récap point de collecte
     recapPointCollecte.textContent = state.pointCollecte || "—";
 
-    // Simuler des valeurs Jarvis pour la démonstration (facile à remplacer par la vraie API)
+    // Simu Jarvis pour la prez
     marqueValue.textContent = "— (à venir via OCR)";
     modeleValue.textContent = "— (à venir via OCR)";
     familleValue.textContent = "— (flux N2 Ecosystem)";
@@ -608,13 +645,12 @@
     propaleTexte.textContent =
       "Proposition simulée : réemploi prioritaire (exemple – sera calculé par Jarvis selon les critères réseau Envie).";
 
-    // Reset orientation & refus
     document.querySelectorAll('input[name="orientation"]').forEach(r => {
-      if (r.value === "jarvis") r.checked = true;
-      else r.checked = false;
+      r.checked = (r.value === "jarvis");
     });
     motifRefusField.style.display = "none";
     motifRefusInput.value = "";
+    state.motifRefus = "";
 
     goToStep(3);
   });
@@ -650,7 +686,6 @@
 
   // STEP 3 – Boutons
   btnStep3Back.addEventListener("click", () => {
-    // On revient à l’étape 2 pour pouvoir corriger les photos ou le point
     goToStep(2);
   });
 
@@ -667,9 +702,6 @@
       if (!ok) return;
     }
 
-    // Ici, en vraie prod, on ferait un fetch() vers ton API /collecte/creer
-    // avec un JSON contenant toutes les infos.
-    // On se contente pour l’instant d’un résumé simple.
     const resume = {
       pointCollecte: state.pointCollecte,
       numTracaComplet: state.numTracaComplet || null,
@@ -682,9 +714,6 @@
     console.log("Fiche Jarvis validée (simulation) :", resume);
     alert("Fiche Jarvis validée (simulation).\n\n" +
       "Les données sont visibles dans la console du navigateur pour contrôle.");
-
-    // Eventuellement : reset pour une nouvelle collecte
-    // (On laisse tel quel pour enchaîner plusieurs tests sans tout effacer.)
   });
 </script>
 </body>
