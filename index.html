@@ -1,720 +1,304 @@
 <!doctype html>
 <html lang="fr">
-<head>
-  <meta charset="UTF-8">
-  <title>Jarvis Collecte – Prototype</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <style>
-    body {
-      margin: 0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: #f5f7fa;
-      color: #111827;
-    }
-    .app-container {
-      max-width: 480px;
-      margin: 0 auto;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      background: #ffffff;
-      box-shadow: 0 0 20px rgba(0,0,0,0.05);
-    }
-    header {
-      padding: 12px 16px;
-      background: #065f46;
-      color: #ecfdf5;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    header h1 {
-      font-size: 1.1rem;
-      margin: 0;
-    }
-    header span {
-      font-size: 0.75rem;
-      opacity: 0.9;
-    }
-    .step-indicator {
-      display: flex;
-      gap: 4px;
-      align-items: center;
-      font-size: 0.8rem;
-    }
-    .step-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.4);
-    }
-    .step-dot.active {
-      width: 24px;
-      background: #ecfdf5;
-    }
-
-    main {
-      flex: 1;
-      padding: 16px;
-    }
-
-    .step {
-      display: none;
-    }
-    .step.active {
-      display: block;
-    }
-
-    h2 {
-      font-size: 1rem;
-      margin: 0 0 8px;
-      color: #111827;
-    }
-    p {
-      font-size: 0.85rem;
-      margin: 0 0 12px;
-      color: #4b5563;
-    }
-
-    .field {
-      margin-bottom: 14px;
-    }
-    .field label {
-      display: block;
-      font-size: 0.85rem;
-      font-weight: 600;
-      margin-bottom: 4px;
-      color: #111827;
-    }
-    .field small {
-      display: block;
-      font-size: 0.75rem;
-      color: #6b7280;
-      margin-bottom: 4px;
-    }
-    select, input[type="text"], input[type="number"] {
-      width: 100%;
-      padding: 10px;
-      border-radius: 8px;
-      border: 1px solid #d1d5db;
-      font-size: 0.9rem;
-      box-sizing: border-box;
-      background: #f9fafb;
-    }
-    select:focus, input:focus {
-      outline: none;
-      border-color: #059669;
-      box-shadow: 0 0 0 1px #a7f3d0;
-      background: #ffffff;
-    }
-
-    .file-input {
-      border: 1px dashed #d1d5db;
-      border-radius: 10px;
-      padding: 10px;
-      background: #f9fafb;
-    }
-    .file-input input[type="file"] {
-      width: 100%;
-      font-size: 0.8rem;
-    }
-    .preview {
-      margin-top: 8px;
-      font-size: 0.75rem;
-      color: #6b7280;
-    }
-    .preview img {
-      display: block;
-      margin-top: 4px;
-      max-width: 100%;
-      border-radius: 6px;
-      border: 1px solid #e5e7eb;
-    }
-
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      padding: 2px 8px;
-      border-radius: 999px;
-      font-size: 0.7rem;
-      font-weight: 600;
-    }
-    .badge-info {
-      background: #eff6ff;
-      color: #1d4ed8;
-    }
-    .badge-warning {
-      background: #fffbeb;
-      color: #92400e;
-    }
-    .badge-success {
-      background: #ecfdf5;
-      color: #166534;
-    }
-
-    .card {
-      border-radius: 12px;
-      border: 1px solid #e5e7eb;
-      padding: 12px;
-      background: #f9fafb;
-      margin-bottom: 12px;
-    }
-    .card-title {
-      font-size: 0.9rem;
-      font-weight: 600;
-      margin-bottom: 4px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .card-row {
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.8rem;
-      margin-top: 3px;
-    }
-    .card-row span.label {
-      color: #6b7280;
-    }
-    .card-row span.value {
-      font-weight: 500;
-    }
-
-    .orientation-options {
-      margin-top: 6px;
-      font-size: 0.8rem;
-    }
-    .orientation-options label {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      margin-bottom: 4px;
-      font-weight: 400;
-    }
-
-    .buttons {
-      display: flex;
-      gap: 8px;
-      margin-top: 12px;
-      flex-wrap: wrap;
-    }
-    button {
-      border-radius: 999px;
-      border: none;
-      padding: 10px 16px;
-      font-size: 0.9rem;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      white-space: nowrap;
-    }
-    button.primary {
-      background: #059669;
-      color: #ecfdf5;
-    }
-    button.primary:disabled {
-      background: #bbf7d0;
-      color: #166534;
-      cursor: not-allowed;
-    }
-    button.secondary {
-      background: #e5e7eb;
-      color: #111827;
-    }
-    button.outline {
-      background: transparent;
-      border: 1px solid #d1d5db;
-      color: #111827;
-      padding: 6px 10px;
-      font-size: 0.8rem;
-    }
-
-    footer {
-      padding: 10px 16px;
-      border-top: 1px solid #e5e7eb;
-      font-size: 0.7rem;
-      color: #6b7280;
-      background: #f9fafb;
-      text-align: center;
-    }
-
-    .error-text {
-      font-size: 0.75rem;
-      color: #b91c1c;
-      margin-top: 4px;
-    }
-
-  </style>
-</head>
-<body>
-<div class="app-container">
-  <header>
-    <div>
-      <h1>Jarvis Collecte</h1>
-      <span>Phase 1 – Point de collecte & photos</span>
-    </div>
-    <div class="step-indicator">
-      <div class="step-dot active" id="dot-step-1"></div>
-      <div class="step-dot" id="dot-step-2"></div>
-      <div class="step-dot" id="dot-step-3"></div>
-    </div>
-  </header>
-
-  <main>
-    <!-- ÉTAPE 1 : Point de collecte -->
-    <section class="step active" id="step-1">
-      <h2>1. Sélection du point de collecte</h2>
-      <p>Choisis le point de collecte avant de commencer la fiche Jarvis.</p>
-
-      <div class="field">
-        <label for="pointCollecte">Point de collecte</label>
-        <small>Liste ou saisie libre selon l’organisation Envie.</small>
-        <select id="pointCollecte">
-          <option value="">— Sélectionner —</option>
-          <option value="Magasin principal">Magasin principal</option>
-          <option value="Drive / Déchetterie partenaire">Drive / Déchetterie partenaire</option>
-          <option value="Tournée domicile">Tournée domicile</option>
-          <option value="Autre">Autre (préciser en commentaire)</option>
-        </select>
-      </div>
-
-      <div class="buttons">
-        <button class="primary" id="btn-step-1-next" disabled>
-          Continuer vers les photos
-        </button>
-      </div>
-    </section>
-
-    <!-- ÉTAPE 2 : Photos -->
-    <section class="step" id="step-2">
-      <h2>2. Photos de l’appareil</h2>
-      <p>Prendre ou ajouter les deux photos nécessaires à l’analyse Jarvis.</p>
-
-      <div class="field">
-        <label for="photoFace">Photo face avant</label>
-        <small>Permet une vérification visuelle de l’état général.</small>
-        <div class="file-input">
-          <input type="file" id="photoFace" accept="image/*" capture="environment">
-          <div class="buttons" style="margin-top:8px;">
-            <button type="button" class="outline" id="btnFaceDemo">
-              Utiliser une photo de test
-            </button>
-          </div>
-          <div class="preview" id="previewFace">Aucune photo sélectionnée.</div>
-        </div>
-      </div>
-
-      <div class="field">
-        <label for="photoEtiquette">Photo étiquette</label>
-        <small>C’est cette photo qui servira à lire le numéro et les infos produit.</small>
-        <div class="file-input">
-          <input type="file" id="photoEtiquette" accept="image/*" capture="environment">
-          <div class="buttons" style="margin-top:8px;">
-            <button type="button" class="outline" id="btnEtiquetteDemo">
-              Utiliser une photo de test
-            </button>
-          </div>
-          <div class="preview" id="previewEtiquette">Aucune photo sélectionnée.</div>
-        </div>
-      </div>
-
-      <div class="buttons">
-        <button class="secondary" id="btn-step-2-back">
-          ⬅ Retour point de collecte
-        </button>
-        <button class="primary" id="btn-analyse" disabled>
-          Lancer l’analyse Jarvis
-        </button>
-      </div>
-      <div id="analyseError" class="error-text" style="display:none;">
-        Merci de sélectionner les deux photos (ou photos de test) avant de lancer l’analyse.
-      </div>
-    </section>
-
-    <!-- ÉTAPE 3 : Retour Jarvis & propale -->
-    <section class="step" id="step-3">
-      <h2>3. Retour Jarvis & proposition</h2>
-      <p>
-        Résumé de la collecte, première analyse Jarvis et possibilité de corriger avant validation.
-      </p>
-
-      <!-- Résumé contexte -->
-      <div class="card">
-        <div class="card-title">
-          <span>Contexte collecte</span>
-          <span class="badge badge-info">Récap</span>
-        </div>
-        <div class="card-row">
-          <span class="label">Point de collecte</span>
-          <span class="value" id="recapPointCollecte">—</span>
-        </div>
-      </div>
-
-      <!-- Bloc identité produit & Traca -->
-      <div class="card">
-        <div class="card-title">
-          <span>Identité produit</span>
-          <span class="badge badge-warning">Numéro non lu – saisie</span>
-        </div>
-
-        <div class="field">
-          <label for="structureSelect">Structure Envie</label>
-          <small>Sites pilotes DPP privilégiés pour Jarvis.</small>
-          <select id="structureSelect">
-            <option value="">— Sélectionner —</option>
-            <option value="1001">1001 – Envie Nord Tourcoing</option>
-            <option value="1701">1701 – Envie Drôme Ardèche</option>
-            <option value="2901">2901 – Envie Clermont Ferrand</option>
-          </select>
-        </div>
-
-        <div class="field">
-          <label for="idTraca">ID Traca (sans code structure)</label>
-          <small>Numéro interne, Jarvis complétera automatiquement le format complet.</small>
-          <input type="text" id="idTraca" inputmode="numeric" placeholder="ex : 24386">
-        </div>
-
-        <div class="card-row">
-          <span class="label">Numéro traca complet</span>
-          <span class="value" id="numTracaComplet">—</span>
-        </div>
-
-        <div class="field" style="margin-top:10px;">
-          <label>Marque & modèle (en attente IA)</label>
-          <small>Ces champs seront remplis automatiquement par Jarvis une fois connecté à l’OCR.</small>
-          <div class="card-row">
-            <span class="label">Marque</span>
-            <span class="value" id="marqueValue">—</span>
-          </div>
-          <div class="card-row">
-            <span class="label">Modèle</span>
-            <span class="value" id="modeleValue">—</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Bloc famille / sous-famille / poids -->
-      <div class="card">
-        <div class="card-title">
-          <span>Typologie & poids</span>
-          <span class="badge badge-info">Données Jarvis</span>
-        </div>
-        <div class="card-row">
-          <span class="label">Famille (flux N2)</span>
-          <span class="value" id="familleValue">—</span>
-        </div>
-        <div class="card-row">
-          <span class="label">Sous-famille (type N1)</span>
-          <span class="value" id="sousFamilleValue">—</span>
-        </div>
-        <div class="card-row">
-          <span class="label">Poids</span>
-          <span class="value" id="poidsValue">
-            — <span id="poidsBadge" class="badge">—</span>
-          </span>
-        </div>
-      </div>
-
-      <!-- Bloc propale Jarvis -->
-      <div class="card">
-        <div class="card-title">
-          <span>Proposition Jarvis</span>
-          <span class="badge badge-success">Orientation</span>
-        </div>
-        <p style="font-size:0.8rem; margin-bottom:6px;" id="propaleTexte">
-          Proposition simulée : réemploi prioritaire (à adapter selon critères réseau Envie).
-        </p>
-        <div class="orientation-options">
-          <label>
-            <input type="radio" name="orientation" value="jarvis" checked>
-            Suivre la proposition Jarvis
-          </label>
-          <label>
-            <input type="radio" name="orientation" value="reemploi">
-            Forcer orientation : Réemploi
-          </label>
-          <label>
-            <input type="radio" name="orientation" value="pieces">
-            Forcer orientation : Démontage pour pièces
-          </label>
-          <label>
-            <input type="radio" name="orientation" value="refus">
-            Refus collecte (motif obligatoire)
-          </label>
-        </div>
-
-        <div class="field" id="motifRefusField" style="display:none; margin-top:6px;">
-          <label for="motifRefus">Motif de refus</label>
-          <input type="text" id="motifRefus" placeholder="Ex : appareil dangereux, incomplet, hors gabarit…">
-        </div>
-      </div>
-
-      <div class="buttons">
-        <button class="secondary" id="btn-step-3-back">
-          ✏️ Corriger les informations
-        </button>
-        <button class="primary" id="btn-valider">
-          ✅ Valider la fiche Jarvis
-        </button>
-      </div>
-    </section>
-  </main>
-
-  <footer>
-    Prototype Jarvis Collecte – Phase 1 (point de collecte, 2 photos, premier retour & propale).
-  </footer>
-</div>
-
-<script>
-  // État minimal du formulaire
-  const state = {
-    pointCollecte: "",
-    photoFace: null,
-    photoEtiquette: null,
-    structure: "",
-    idTraca: "",
-    numTracaComplet: "",
-    orientation: "jarvis",
-    motifRefus: ""
-  };
-
-  // Raccourcis DOM
-  const step1 = document.getElementById("step-1");
-  const step2 = document.getElementById("step-2");
-  const step3 = document.getElementById("step-3");
-
-  const dot1 = document.getElementById("dot-step-1");
-  const dot2 = document.getElementById("dot-step-2");
-  const dot3 = document.getElementById("dot-step-3");
-
-  const pointCollecteSelect = document.getElementById("pointCollecte");
-  const btnStep1Next = document.getElementById("btn-step-1-next");
-
-  const photoFaceInput = document.getElementById("photoFace");
-  const photoEtiquetteInput = document.getElementById("photoEtiquette");
-  const previewFace = document.getElementById("previewFace");
-  const previewEtiquette = document.getElementById("previewEtiquette");
-  const btnFaceDemo = document.getElementById("btnFaceDemo");
-  const btnEtiquetteDemo = document.getElementById("btnEtiquetteDemo");
-
-  const btnStep2Back = document.getElementById("btn-step-2-back");
-  const btnAnalyse = document.getElementById("btn-analyse");
-  const analyseError = document.getElementById("analyseError");
-
-  const recapPointCollecte = document.getElementById("recapPointCollecte");
-
-  const structureSelect = document.getElementById("structureSelect");
-  const idTracaInput = document.getElementById("idTraca");
-  const numTracaCompletSpan = document.getElementById("numTracaComplet");
-
-  const marqueValue = document.getElementById("marqueValue");
-  const modeleValue = document.getElementById("modeleValue");
-  const familleValue = document.getElementById("familleValue");
-  const sousFamilleValue = document.getElementById("sousFamilleValue");
-  const poidsValue = document.getElementById("poidsValue");
-  const poidsBadge = document.getElementById("poidsBadge");
-  const propaleTexte = document.getElementById("propaleTexte");
-
-  const btnStep3Back = document.getElementById("btn-step-3-back");
-  const btnValider = document.getElementById("btn-valider");
-
-  const motifRefusField = document.getElementById("motifRefusField");
-  const motifRefusInput = document.getElementById("motifRefus");
-
-  function goToStep(stepIndex) {
-    step1.classList.remove("active");
-    step2.classList.remove("active");
-    step3.classList.remove("active");
-    dot1.classList.remove("active");
-    dot2.classList.remove("active");
-    dot3.classList.remove("active");
-
-    if (stepIndex === 1) {
-      step1.classList.add("active");
-      dot1.classList.add("active");
-    } else if (stepIndex === 2) {
-      step2.classList.add("active");
-      dot2.classList.add("active");
-    } else if (stepIndex === 3) {
-      step3.classList.add("active");
-      dot3.classList.add("active");
-    }
-  }
-
-  function padLeft(numStr, length) {
-    let s = String(numStr).replace(/\D/g, "");
-    while (s.length < length) {
-      s = "0" + s;
-    }
-    return s;
-  }
-
-  function updateTracaComplet() {
-    const structure = structureSelect.value.trim();
-    const idTraca = idTracaInput.value.trim();
-
-    if (!structure || !idTraca) {
-      numTracaCompletSpan.textContent = "—";
-      state.numTracaComplet = "";
-      return;
-    }
-
-    const idTracaPadded = padLeft(idTraca, 8);
-    const full = structure + idTracaPadded;
-    numTracaCompletSpan.textContent = full;
-    state.numTracaComplet = full;
-  }
-
-  function updateAnalyseButton() {
-    const hasFace = !!state.photoFace;
-    const hasEtiquette = !!state.photoEtiquette;
-    btnAnalyse.disabled = !(hasFace && hasEtiquette);
-    analyseError.style.display = "none";
-  }
-
-  // STEP 1
-  pointCollecteSelect.addEventListener("change", () => {
-    state.pointCollecte = pointCollecteSelect.value;
-    btnStep1Next.disabled = !state.pointCollecte;
-  });
-
-  btnStep1Next.addEventListener("click", () => {
-    if (!state.pointCollecte) return;
-    goToStep(2);
-  });
-
-  // STEP 2 – fichiers & photos de test
-  function handleFileChange(input, previewElement, key) {
-    const file = input.files[0];
-    if (!file) {
-      previewElement.textContent = "Aucune photo sélectionnée.";
-      state[key] = null;
-    } else {
-      state[key] = file;
-      previewElement.innerHTML = "Photo sélectionnée : " + file.name;
-    }
-    updateAnalyseButton();
-  }
-
-  photoFaceInput.addEventListener("change", () => {
-    handleFileChange(photoFaceInput, previewFace, "photoFace");
-  });
-
-  photoEtiquetteInput.addEventListener("change", () => {
-    handleFileChange(photoEtiquetteInput, previewEtiquette, "photoEtiquette");
-  });
-
-  btnFaceDemo.addEventListener("click", () => {
-    // On considère une "pseudo photo" pour la démo
-    state.photoFace = "_demo_face_";
-    previewFace.innerHTML = 'Photo de test utilisée : face-test.jpg' +
-      '<img src="photos-tests/face-test.jpg" alt="Photo face avant test">';
-    updateAnalyseButton();
-  });
-
-  btnEtiquetteDemo.addEventListener("click", () => {
-    state.photoEtiquette = "_demo_etiquette_";
-    previewEtiquette.innerHTML = 'Photo de test utilisée : etiquette-test.jpg' +
-      '<img src="photos-tests/etiquette-test.jpg" alt="Photo étiquette test">';
-    updateAnalyseButton();
-  });
-
-  btnStep2Back.addEventListener("click", () => {
-    goToStep(1);
-  });
-
-  btnAnalyse.addEventListener("click", () => {
-    if (!state.photoFace || !state.photoEtiquette) {
-      analyseError.style.display = "block";
-      return;
-    }
-
-    recapPointCollecte.textContent = state.pointCollecte || "—";
-
-    // Simu Jarvis pour la prez
-    marqueValue.textContent = "— (à venir via OCR)";
-    modeleValue.textContent = "— (à venir via OCR)";
-    familleValue.textContent = "— (flux N2 Ecosystem)";
-    sousFamilleValue.textContent = "— (type équipement N1)";
-    poidsValue.firstChild.textContent = "— ";
-    poidsBadge.textContent = "moyenne";
-    poidsBadge.className = "badge badge-warning";
-
-    propaleTexte.textContent =
-      "Proposition simulée : réemploi prioritaire (exemple – sera calculé par Jarvis selon les critères réseau Envie).";
-
-    document.querySelectorAll('input[name="orientation"]').forEach(r => {
-      r.checked = (r.value === "jarvis");
-    });
-    motifRefusField.style.display = "none";
-    motifRefusInput.value = "";
-    state.motifRefus = "";
-
-    goToStep(3);
-  });
-
-  // STEP 3 – Traca complet
-  structureSelect.addEventListener("change", () => {
-    state.structure = structureSelect.value;
-    updateTracaComplet();
-  });
-
-  idTracaInput.addEventListener("input", () => {
-    state.idTraca = idTracaInput.value;
-    updateTracaComplet();
-  });
-
-  // STEP 3 – Orientation & refus
-  document.querySelectorAll('input[name="orientation"]').forEach(radio => {
-    radio.addEventListener("change", (e) => {
-      state.orientation = e.target.value;
-      if (state.orientation === "refus") {
-        motifRefusField.style.display = "block";
-      } else {
-        motifRefusField.style.display = "none";
-        motifRefusInput.value = "";
-        state.motifRefus = "";
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Jarvis – Collecte mobile</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       }
-    });
-  });
 
-  motifRefusInput.addEventListener("input", () => {
-    state.motifRefus = motifRefusInput.value;
-  });
+      body {
+        margin: 0;
+        padding: 0;
+        background: #f3f4f6;
+        color: #111827;
+      }
 
-  // STEP 3 – Boutons
-  btnStep3Back.addEventListener("click", () => {
-    goToStep(2);
-  });
+      .app {
+        max-width: 480px;
+        margin: 0 auto;
+        padding: 16px;
+      }
 
-  btnValider.addEventListener("click", () => {
-    if (state.orientation === "refus" && !state.motifRefus.trim()) {
-      alert("Merci de saisir un motif de refus avant de valider.");
-      return;
-    }
-    if (!state.numTracaComplet) {
-      const ok = confirm(
-        "Aucun numéro traca complet n’est renseigné.\n\n" +
-        "Veux-tu vraiment valider la fiche sans numéro ?"
-      );
-      if (!ok) return;
-    }
+      h1 {
+        font-size: 1.4rem;
+        margin: 0 0 8px;
+        text-align: center;
+      }
 
-    const resume = {
-      pointCollecte: state.pointCollecte,
-      numTracaComplet: state.numTracaComplet || null,
-      structure: state.structure || null,
-      idTraca: state.idTraca || null,
-      orientation: state.orientation,
-      motifRefus: state.motifRefus || null
-    };
+      .subtitle {
+        text-align: center;
+        font-size: 0.85rem;
+        color: #4b5563;
+        margin-bottom: 16px;
+      }
 
-    console.log("Fiche Jarvis validée (simulation) :", resume);
-    alert("Fiche Jarvis validée (simulation).\n\n" +
-      "Les données sont visibles dans la console du navigateur pour contrôle.");
-  });
-</script>
-</body>
-</html>
+      .card {
+        background: #ffffff;
+        border-radius: 12px;
+        padding: 12px 14px;
+        margin-bottom: 14px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
+      }
+
+      .card-title {
+        font-size: 1rem;
+        font-weight: 600;
+        margin-bottom: 8px;
+      }
+
+      label {
+        font-size: 0.85rem;
+        display: block;
+        margin-bottom: 4px;
+      }
+
+      input[type="text"] {
+        width: 100%;
+        padding: 8px 10px;
+        border-radius: 8px;
+        border: 1px solid #d1d5db;
+        font-size: 0.95rem;
+      }
+
+      .btn {
+        width: 100%;
+        padding: 10px 12px;
+        margin-top: 6px;
+        border-radius: 999px;
+        border: none;
+        font-size: 0.95rem;
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      .btn-primary {
+        background: #16a34a;
+        color: white;
+      }
+
+      .btn-secondary {
+        background: #e5e7eb;
+        color: #111827;
+      }
+
+      .btn:active {
+        transform: scale(0.98);
+      }
+
+      .preview-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 6px;
+        margin-top: 8px;
+      }
+
+      .preview-slot {
+        background: #f9fafb;
+        border-radius: 8px;
+        padding: 4px;
+        border: 1px dashed #d1d5db;
+        text-align: center;
+        font-size: 0.75rem;
+      }
+
+      .preview-slot img {
+        max-width: 100%;
+        max-height: 80px;
+        border-radius: 6px;
+        display: block;
+        margin: 0 auto 4px;
+      }
+
+      .slot-title {
+        font-weight: 600;
+        margin-bottom: 2px;
+        font-size: 0.75rem;
+      }
+
+      .jarvis-output {
+        font-size: 0.9rem;
+        white-space: pre-line;
+      }
+
+      .badge {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 999px;
+        font-size: 0.7rem;
+        background: #e5e7eb;
+        color: #374151;
+        margin-right: 4px;
+      }
+
+      .badge-ok {
+        background: #dcfce7;
+        color: #166534;
+      }
+
+      .badge-warn {
+        background: #fef3c7;
+        color: #92400e;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <h1>Jarvis – Collecte</h1>
+      <div class="subtitle">
+        Phase 1 – Test mobile (photo ou fichier)
+      </div>
+
+      <!-- ID TRACA (optionnel) -->
+      <div class="card">
+        <div class="card-title">1️⃣ Identifiant Traca (optionnel)</div>
+        <label for="id-traca">ID Traca Envie</label>
+        <input
+          id="id-traca"
+          type="text"
+          placeholder="Ex : 210100012345"
+          autocomplete="off"
+        />
+      </div>
+
+      <!-- OPTION 1 : PHOTO UNIQUE -->
+      <div class="card">
+        <div class="card-title">
+          2️⃣ Option A – Une seule photo (face, plaque ou Traca)
+        </div>
+        <p style="font-size: 0.8rem; margin: 0 0 6px;">
+          Jarvis recevra une photo unique (il décidera plus tard si c’est une
+          face, une plaque ou un code-barres).
+        </p>
+        <button id="btn-photo-unique" class="btn btn-secondary">
+          📸 Prendre / choisir une photo
+        </button>
+        <input
+          id="input-photo-unique"
+          type="file"
+          accept="image/*"
+          capture="environment"
+          style="display: none;"
+        />
+
+        <div id="preview-unique" class="preview-grid" style="margin-top: 8px;">
+          <div class="preview-slot" id="preview-unique-slot">
+            <div class="slot-title">Photo unique</div>
+            <span style="font-size: 0.75rem; color: #6b7280;"
+              >Aucune photo sélectionnée</span
+            >
+          </div>
+        </div>
+      </div>
+
+      <!-- OPTION 2 : 3 PHOTOS DISTINCTES -->
+      <div class="card">
+        <div class="card-title">
+          3️⃣ Option B – Trois photos distinctes
+        </div>
+        <p style="font-size: 0.8rem; margin: 0 0 6px;">
+          Face, plaque signalétique et étiquette Traca peuvent être prises ou
+          choisies séparément.
+        </p>
+
+        <button id="btn-face" class="btn btn-secondary">
+          😀 Face appareil
+        </button>
+        <input
+          id="input-face"
+          type="file"
+          accept="image/*"
+          capture="environment"
+          style="display: none;"
+        />
+
+        <button id="btn-plaque" class="btn btn-secondary">
+          🪪 Plaque signalétique
+        </button>
+        <input
+          id="input-plaque"
+          type="file"
+          accept="image/*"
+          capture="environment"
+          style="display: none;"
+        />
+
+        <button id="btn-traca" class="btn btn-secondary">
+          🏷️ Étiquette Traca / code-barres
+        </button>
+        <input
+          id="input-traca"
+          type="file"
+          accept="image/*"
+          capture="environment"
+          style="display: none;"
+        />
+
+        <div class="preview-grid">
+          <div class="preview-slot" id="preview-face">
+            <div class="slot-title">Face</div>
+            <span style="font-size: 0.75rem; color: #6b7280;"
+              >Aucune photo</span
+            >
+          </div>
+          <div class="preview-slot" id="preview-plaque">
+            <div class="slot-title">Plaque</div>
+            <span style="font-size: 0.75rem; color: #6b7280;"
+              >Aucune photo</span
+            >
+          </div>
+          <div class="preview-slot" id="preview-traca">
+            <div class="slot-title">Traca</div>
+            <span style="font-size: 0.75rem; color: #6b7280;"
+              >Aucune photo</span
+            >
+          </div>
+        </div>
+      </div>
+
+      <!-- BOUTON ANALYSE -->
+      <div class="card">
+        <div class="card-title">4️⃣ Lancer l'analyse Jarvis (simulation)</div>
+        <button id="btn-analyse" class="btn btn-primary">
+          🤖 Analyser avec Jarvis
+        </button>
+
+        <div id="jarvis-result" class="jarvis-output" style="margin-top: 10px;">
+          Jarvis n'a pas encore reçu de données.
+        </div>
+      </div>
+
+      <div style="text-align: center; font-size: 0.7rem; color: #9ca3af;">
+        Jarvis Phase 1 – Interface de test. Les photos restent sur l'appareil
+        (pas encore d'envoi serveur).
+      </div>
+    </div>
+
+    <script>
+      // --- Références éléments DOM ---
+      const idTracaInput = document.getElementById("id-traca");
+
+      const btnPhotoUnique = document.getElementById("btn-photo-unique");
+      const inputPhotoUnique = document.getElementById("input-photo-unique");
+      const previewUniqueSlot = document.getElementById("preview-unique-slot");
+
+      const btnFace = document.getElementById("btn-face");
+      const btnPlaque = document.getElementById("btn-plaque");
+      const btnTraca = document.getElementById("btn-traca");
+
+      const inputFace = document.getElementById("input-face");
+      const inputPlaque = document.getElementById("input-plaque");
+      const inputTraca = document.getElementById("input-traca");
+
+      const previewFace = document.getElementById("preview-face");
+      const previewPlaque = document.getElementById("preview-plaque");
+      const previewTraca = document.getElementById("preview-traca");
+
+      const btnAnalyse = document.getElementById("btn-analyse");
+      const jarvisResult = document.getElementById("jarvis-result");
+
+      // --- État "mémoire" côté front ---
+      let fileUnique
