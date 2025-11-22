@@ -1,88 +1,591 @@
-from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
-import httpx
-from bs4 import BeautifulSoup  # pip install beautifulsoup4
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Jarvis Envie – Collecte produit</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      :root {
+        --envie-vert-fonce: #00463c;
+        --envie-vert-moyen: #237031;
+        --envie-vert-clair: #c7e1bc;
+        --envie-orange: #ea5c10;
 
-app = FastAPI()
+        --bg-page: #f4f5f7;
+        --bg-card: #ffffff;
+        --border-soft: #d0d4da;
+        --text-main: #1f2933;
+        --text-muted: #4b5563;
+      }
 
-class DppParseRequest(BaseModel):
-    dpp_url: str
-    point_collecte_code: str | None = None
-    structure_operateur: str | None = None
+      * {
+        box-sizing: border-box;
+      }
 
-class DppParseResponse(BaseModel):
-    flux: str | None = None
-    flux_sous: str | None = None
-    famille: str | None = None
-    sous_famille: str | None = None
-    marque: str | None = None
-    modele: str | None = None
-    serie: str | None = None
-    annee: int | None = None
-    poids_kg: float | None = None
-    brut: str | None = None
+      body {
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          sans-serif;
+        margin: 0;
+        padding: 0.8rem;
+        background: var(--bg-page);
+        color: var(--text-main);
+      }
 
-@app.post("/dpp/parse", response_model=DppParseResponse)
-async def parse_dpp(req: DppParseRequest):
-    # 1. Récupérer la page DPP (URL différente par produit, mais menus toujours au même endroit)
-    try:
-        async with httpx.AsyncClient(timeout=10) as client:
-            r = await client.get(req.dpp_url)
-        r.raise_for_status()
-    except Exception as e:
-        raise HTTPException(status_code=502, detail=f"Impossible d'accéder à l'URL DPP: {e}")
+      .topbar {
+        background: var(--envie-vert-fonce);
+        color: #ffffff;
+        padding: 0.6rem 0.8rem;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.5rem;
+        box-shadow: 0 3px 12px rgba(0, 0, 0, 0.18);
+        margin-bottom: 0.8rem;
+      }
 
-    html = r.text
-    soup = BeautifulSoup(html, "html.parser")
+      .topbar-main {
+        display: flex;
+        flex-direction: column;
+      }
 
-    # 2. Extraire les infos dans les menus DPP
-    # ⬇️ ICI tu mets les vrais sélecteurs CSS / id / classes de la page DPP (toujours mêmes menus)
-    # Exemple purement fictif à adapter :
-    def txt(selector):
-        el = soup.select_one(selector)
-        return el.get_text(strip=True) if el else None
+      .topbar-title {
+        font-weight: 650;
+        font-size: 1rem;
+        letter-spacing: 0.02em;
+      }
 
-    marque = txt("div.dpp-header span.brand")
-    modele = txt("div.dpp-header span.model")
-    serie = txt("div.dpp-technical span.serial")
-    # flux / famille / sous-famille / poids peuvent être dans un tableau technique :
-    flux = txt("table.dpp-specs tr[data-field='flux'] td.value")
-    flux_sous = txt("table.dpp-specs tr[data-field='subflux'] td.value")
-    famille = txt("table.dpp-specs tr[data-field='family'] td.value")
-    sous_famille = txt("table.dpp-specs tr[data-field='subcategory'] td.value")
-    poids_txt = txt("table.dpp-specs tr[data-field='weight'] td.value")
-    annee_txt = txt("table.dpp-specs tr[data-field='year'] td.value")
+      .topbar-subtitle {
+        font-size: 0.75rem;
+        opacity: 0.9;
+      }
 
-    # 3. Normaliser poids / année
-    poids_kg = None
-    if poids_txt:
-        # on garde uniquement les chiffres et le point/virgule
-        import re
-        m = re.search(r"([\d.,]+)", poids_txt)
-        if m:
-          poids_str = m.group(1).replace(",", ".")
-          try:
-            poids_kg = float(poids_str)
-          except ValueError:
-            poids_kg = None
+      .topbar-badge {
+        background: var(--envie-orange);
+        color: #ffffff;
+        font-size: 0.7rem;
+        font-weight: 600;
+        border-radius: 999px;
+        padding: 0.25rem 0.6rem;
+        white-space: nowrap;
+      }
 
-    annee = None
-    if annee_txt:
-        try:
-            annee = int(annee_txt[:4])
-        except Exception:
-            annee = None
+      h1 {
+        margin: 0.4rem 0 0.2rem;
+        font-size: 1rem;
+        color: var(--envie-vert-fonce);
+      }
 
-    # 4. Retour JSON normalisé pour le front JARVIS
-    return DppParseResponse(
-        flux=flux,
-        flux_sous=flux_sous,
-        famille=famille,
-        sous_famille=sous_famille,
-        marque=marque,
-        modele=modele,
-        serie=serie,
-        annee=annee,
-        poids_kg=poids_kg,
-        brut=f"URL: {req.dpp_url}",
-    )
+      p.lead {
+        font-size: 0.8rem;
+        margin: 0 0 0.7rem;
+        color: var(--text-muted);
+      }
+
+      .card {
+        background: var(--bg-card);
+        border-radius: 12px;
+        padding: 0.8rem;
+        margin-bottom: 0.8rem;
+        box-shadow: 0 2px 7px rgba(0, 0, 0, 0.06);
+        border: 1px solid rgba(0, 0, 0, 0.03);
+      }
+
+      h2 {
+        font-size: 0.95rem;
+        margin: 0 0 0.4rem;
+        color: var(--envie-vert-fonce);
+      }
+
+      label {
+        display: block;
+        font-size: 0.8rem;
+        margin-top: 0.4rem;
+        color: var(--text-main);
+      }
+
+      input,
+      select {
+        width: 100%;
+        padding: 0.4rem 0.5rem;
+        margin-top: 0.2rem;
+        border-radius: 8px;
+        border: 1px solid var(--border-soft);
+        font-size: 0.85rem;
+        background: #ffffff;
+      }
+
+      input:focus,
+      select:focus {
+        outline: 2px solid var(--envie-vert-moyen);
+        outline-offset: 1px;
+        border-color: var(--envie-vert-moyen);
+      }
+
+      button {
+        margin-top: 0.6rem;
+        padding: 0.5rem 0.8rem;
+        border-radius: 999px;
+        border: none;
+        font-size: 0.9rem;
+        cursor: pointer;
+        background: var(--envie-vert-moyen);
+        color: #ffffff;
+        font-weight: 550;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.3rem;
+      }
+
+      button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+
+      .btn-block {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.6rem;
+      }
+
+      .result {
+        margin-top: 0.5rem;
+        padding: 0.5rem 0.6rem;
+        font-size: 0.8rem;
+        background: #f8fafc;
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
+        white-space: pre-wrap;
+        color: #1f2933;
+      }
+
+      .helper-text {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        margin-top: 0.2rem;
+      }
+
+      @media (max-width: 700px) {
+        .row {
+          grid-template-columns: 1fr;
+        }
+
+        .topbar {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        button {
+          width: 100%;
+        }
+      }
+
+      @media (min-width: 1000px) {
+        body {
+          max-width: 900px;
+          margin: 0 auto;
+          padding: 1rem 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="topbar-main">
+        <div class="topbar-title">JARVIS · Envie</div>
+        <div class="topbar-subtitle">Phase 1 – Collecte & création produit</div>
+      </div>
+      <div class="topbar-badge">L’IA au service de l’insertion</div>
+    </header>
+
+    <h1>Collecte produit – Page 1</h1>
+    <p class="lead">
+      0. Choisir le <strong>point de collecte</strong><br />
+      1. Saisir l’ID Traca<br />
+      2. Créer la fiche si besoin
+    </p>
+
+    <!-- 0. Point de collecte -->
+    <div class="card">
+      <h2>0. Point de collecte</h2>
+      <label for="point_collecte_select">Point de collecte</label>
+      <select id="point_collecte_select">
+        <option value="">-- choisir le point de collecte --</option>
+        <option value="DV26" data-libelle="Darty Valence">DV26 – Darty Valence</option>
+        <option value="AUTRE" data-libelle="Autre point (démo)">
+          AUTRE – Autre point (démo)
+        </option>
+      </select>
+      <p class="helper-text">
+        Ce point sera enregistré sur la fiche produit créée pour la collecte.
+      </p>
+    </div>
+
+    <!-- 1. Scan / vérification ID Traca -->
+    <div class="card">
+      <h2>1. ID Traca</h2>
+      <div class="row">
+        <div>
+          <label for="scan_id_traca">ID Traca (12 chiffres)</label>
+          <input id="scan_id_traca" placeholder="ex : 170100000001" />
+          <div class="helper-text">
+            Numéro collé sur le produit (étiquette Traça).
+          </div>
+        </div>
+        <div>
+          <label for="scan_struct_op">Structure Envie opératrice</label>
+          <select id="scan_struct_op">
+            <option value="1701">1701 – Envie Drôme Ardèche</option>
+            <option value="1001">1001 – Envie Tourcoing</option>
+          </select>
+        </div>
+      </div>
+      <button id="btn_scan" class="btn-block">🔍 Vérifier dans la base</button>
+      <div id="scan_result" class="result" style="display: none;"></div>
+    </div>
+
+    <!-- 2. Résultat base -->
+    <div class="card" id="card_produit" style="display: none;">
+      <h2>2. Résultat base Jarvis/Traça</h2>
+      <div id="produit_infos" class="result"></div>
+    </div>
+
+    <!-- 3. Création produit -->
+    <div class="card" id="card_creation" style="display: none;">
+      <h2>3. Création produit pour la collecte</h2>
+      <p class="helper-text">
+        Produit inconnu : la structure peut créer une fiche minimale de collecte.
+      </p>
+
+      <div class="row">
+        <div>
+          <label for="cre_point_code">Point de collecte (code)</label>
+          <input id="cre_point_code" placeholder="ex : DV26" />
+        </div>
+        <div>
+          <label for="cre_point_lib">Point de collecte (nom)</label>
+          <input id="cre_point_lib" placeholder="ex : Darty Valence" />
+        </div>
+      </div>
+
+      <label for="cre_flux">Flux (ex : GEMF)</label>
+      <input id="cre_flux" placeholder="ex : GEMF" />
+
+      <label for="cre_famille">Famille</label>
+      <input id="cre_famille" placeholder="ex : FROID" />
+
+      <label for="cre_sous_famille">Sous-famille</label>
+      <input
+        id="cre_sous_famille"
+        placeholder="ex : COMBINÉ RÉFRIGÉRATEUR / CONGÉLATEUR"
+      />
+
+      <label for="cre_marque">Marque</label>
+      <input id="cre_marque" placeholder="ex : SAMSUNG" />
+
+      <label for="cre_modele">Modèle</label>
+      <input id="cre_modele" placeholder="ex : RB31FEJNDSA/EF" />
+
+      <label for="cre_serie">N° de série</label>
+      <input id="cre_serie" placeholder="ex : SN123456789" />
+
+      <label for="cre_annee">Année de fabrication</label>
+      <input id="cre_annee" type="number" placeholder="ex : 2018" />
+
+      <label for="cre_poids">Poids (kg)</label>
+      <input id="cre_poids" type="number" step="0.1" placeholder="ex : 65" />
+
+      <button id="btn_creer" class="btn-block">
+        ✅ Créer le produit (collecte)
+      </button>
+
+      <div id="cre_result" class="result" style="display: none;"></div>
+    </div>
+
+    <script>
+      // ⚠️ Mets ici l'URL de ton backend opérationnel
+      // Pour test local : "http://127.0.0.1:8000"
+      // Pour prod (exemple) : "https://jarvis-envie.onrender.com"
+      const API_BASE = "http://127.0.0.1:8000";
+
+      function getPointCollecte() {
+        const sel = document.getElementById("point_collecte_select");
+        const val = sel.value;
+        if (!val) return null;
+        const opt = sel.options[sel.selectedIndex];
+        const lib = opt.getAttribute("data-libelle") || opt.textContent.trim();
+        return { code: val, libelle: lib };
+      }
+
+      function syncPointCollecteToCreation() {
+        const pc = getPointCollecte();
+        const codeInput = document.getElementById("cre_point_code");
+        const libInput = document.getElementById("cre_point_lib");
+        if (!pc) {
+          codeInput.value = "";
+          libInput.value = "";
+          return;
+        }
+        codeInput.value = pc.code;
+        libInput.value = pc.libelle;
+      }
+
+      document
+        .getElementById("point_collecte_select")
+        .addEventListener("change", syncPointCollecteToCreation);
+
+      function showScanResult(text) {
+        const div = document.getElementById("scan_result");
+        div.style.display = "block";
+        div.textContent = text;
+      }
+
+      function renderProduitInfos(data) {
+        const card = document.getElementById("card_produit");
+        const div = document.getElementById("produit_infos");
+        card.style.display = "block";
+
+        const pc = getPointCollecte();
+        const lignes = [];
+
+        if (data.existe && data.produit) {
+          const p = data.produit;
+          lignes.push("✅ PRODUIT TROUVÉ dans la base.");
+          lignes.push("");
+          lignes.push("ID Traca : " + data.id_traca);
+          lignes.push(
+            "Structure origine : " +
+              (data.structure_origine.code || "?") +
+              " – " +
+              (data.structure_origine.nom || "inconnue")
+          );
+          lignes.push(
+            "Structure opérateur : " +
+              (data.structure_operateur.code || "?") +
+              " – " +
+              (data.structure_operateur.nom || "inconnue")
+          );
+          if (pc) {
+            lignes.push(
+              "Point de collecte (sélectionné) : " +
+                pc.code +
+                " – " +
+                pc.libelle
+            );
+          }
+          lignes.push("");
+          lignes.push(
+            "Flux / Famille / Sous-famille : " +
+              (p.code_flux || "-") +
+              " / " +
+              (p.code_famille || "-") +
+              " / " +
+              (p.code_sous_famille || "-")
+          );
+          lignes.push(
+            "Point de collecte enregistré : " +
+              (p.point_collecte_code || "-") +
+              " – " +
+              (p.point_collecte_libelle || "-")
+          );
+          lignes.push("Poids (kg)        : " + (p.poids_kg ?? "-"));
+          lignes.push("État              : " + (p.etat || "-"));
+        } else {
+          lignes.push("ℹ️ Produit inconnu dans la base.");
+          lignes.push("");
+          lignes.push("ID Traca : " + data.id_traca);
+          lignes.push(
+            "Structure opérateur : " +
+              (data.structure_operateur.code || "?") +
+              " – " +
+              (data.structure_operateur.nom || "inconnue")
+          );
+          if (pc) {
+            lignes.push(
+              "Point de collecte (sélectionné) : " +
+                pc.code +
+                " – " +
+                pc.libelle
+            );
+          }
+          lignes.push("");
+          if (data.peut_creer_produit) {
+            lignes.push("✅ Création autorisée pour cette structure.");
+            document.getElementById("card_creation").style.display = "block";
+            syncPointCollecteToCreation();
+          } else {
+            lignes.push("⛔ Création réservée à la structure d'origine.");
+            document.getElementById("card_creation").style.display = "none";
+          }
+        }
+
+        div.textContent = lignes.join("\n");
+      }
+
+      async function doScan() {
+        const pc = getPointCollecte();
+        if (!pc) {
+          showScanResult("❌ Choisir d’abord le point de collecte (0).");
+          document.getElementById("card_produit").style.display = "none";
+          document.getElementById("card_creation").style.display = "none";
+          return;
+        }
+
+        const id_traca = document.getElementById("scan_id_traca").value.trim();
+        const struct_op = document.getElementById("scan_struct_op").value.trim();
+
+        if (!id_traca) {
+          showScanResult("❌ Saisir l’ID Traca (12 chiffres).");
+          document.getElementById("card_produit").style.display = "none";
+          document.getElementById("card_creation").style.display = "none";
+          return;
+        }
+
+        showScanResult(
+          "⏳ Vérification dans la base…\nPoint de collecte : " +
+            pc.code +
+            " – " +
+            pc.libelle
+        );
+        document.getElementById("card_produit").style.display = "none";
+        document.getElementById("card_creation").style.display = "none";
+
+        try {
+          const resp = await fetch(API_BASE + "/scan", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              id_traca: id_traca,
+              code_structure_operateur: struct_op,
+            }),
+          });
+          const data = await resp.json();
+          if (!resp.ok) {
+            showScanResult("❌ Erreur API /scan : " + (data.detail || resp.status));
+            return;
+          }
+          showScanResult(data.message || "OK.");
+          renderProduitInfos(data);
+        } catch (e) {
+          showScanResult("❌ Erreur de connexion au backend : " + e);
+        }
+      }
+
+      async function doCreate() {
+        const pc = getPointCollecte();
+        const div = document.getElementById("cre_result");
+        div.style.display = "block";
+
+        if (!pc) {
+          div.textContent = "❌ Choisir le point de collecte (0) avant de créer.";
+          return;
+        }
+
+        const id_traca = document.getElementById("scan_id_traca").value.trim();
+        const struct_op = document.getElementById("scan_struct_op").value.trim();
+
+        if (!struct_op) {
+          div.textContent = "❌ Choisir la structure opératrice.";
+          return;
+        }
+
+        const pcCode = document.getElementById("cre_point_code").value.trim();
+        const pcLib = document.getElementById("cre_point_lib").value.trim();
+        if (!pcCode || !pcLib) {
+          div.textContent =
+            "❌ Merci de renseigner le point de collecte (code + libellé).";
+          return;
+        }
+
+        const payload = {
+          id_traca: id_traca || null,
+          code_structure_operateur: struct_op,
+          point_collecte_code: pcCode,
+          point_collecte_libelle: pcLib,
+          code_flux: document.getElementById("cre_flux").value.trim() || null,
+          code_famille: document.getElementById("cre_famille").value.trim() || null,
+          code_sous_famille:
+            document.getElementById("cre_sous_famille").value.trim() || null,
+          marque: document.getElementById("cre_marque").value.trim() || null,
+          modele: document.getElementById("cre_modele").value.trim() || null,
+          numero_serie: document.getElementById("cre_serie").value.trim() || null,
+          annee_fabrication:
+            document.getElementById("cre_annee").value.trim() || null,
+          poids_kg: document.getElementById("cre_poids").value.trim() || null,
+          brut_ocr: null,
+          source_ocr: null,
+        };
+
+        if (payload.annee_fabrication !== null && payload.annee_fabrication !== "") {
+          payload.annee_fabrication = parseInt(payload.annee_fabrication, 10);
+        } else {
+          payload.annee_fabrication = null;
+        }
+        if (payload.poids_kg !== null && payload.poids_kg !== "") {
+          payload.poids_kg = parseFloat(payload.poids_kg);
+        } else {
+          payload.poids_kg = null;
+        }
+
+        div.textContent = "⏳ Création du produit en cours…";
+
+        try {
+          const resp = await fetch(API_BASE + "/collecte/creer", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+          const data = await resp.json();
+          if (!resp.ok) {
+            div.textContent =
+              "❌ Erreur API /collecte/creer : " + (data.detail || resp.status);
+            return;
+          }
+
+          const p = data.produit || {};
+          const lignes = [];
+          lignes.push("✅ Produit créé pour la collecte.");
+          lignes.push("");
+          lignes.push("ID Traca : " + (data.id_traca || p.id_traca || "?"));
+          lignes.push(
+            "Point de collecte : " +
+              (p.point_collecte_code || pcCode) +
+              " – " +
+              (p.point_collecte_libelle || pcLib)
+          );
+          lignes.push(
+            "Flux / Famille / Sous-famille : " +
+              (p.code_flux || payload.code_flux || "-") +
+              " / " +
+              (p.code_famille || payload.code_famille || "-") +
+              " / " +
+              (p.code_sous_famille || payload.code_sous_famille || "-")
+          );
+          lignes.push(
+            "Marque / Modèle : " +
+              (p.marque || payload.marque || "-") +
+              " / " +
+              (p.modele || payload.modele || "-")
+          );
+          lignes.push(
+            "Poids (kg) : " +
+              (p.poids_kg != null ? p.poids_kg : payload.poids_kg ?? "-")
+          );
+
+          div.textContent = lignes.join("\n");
+        } catch (e) {
+          div.textContent = "❌ Erreur de connexion au backend : " + e;
+        }
+      }
+
+      document.getElementById("btn_scan").addEventListener("click", doScan);
+      document.getElementById("btn_creer").addEventListener("click", doCreate);
+    </script>
+  </body>
+</html>
