@@ -208,6 +208,12 @@
         margin-top: 0;
       }
 
+      .row-photo .stack {
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+      }
+
       .result {
         margin-top: 0.7rem;
         padding: 0.6rem 0.7rem;
@@ -334,22 +340,23 @@
 
     <h1>Traca Envie – Interface Scan & Création</h1>
     <p class="lead">
-      1️⃣ On commence toujours par <strong>l’ID Traca</strong> (scan live ou saisie) et la
-      <strong>structure opérateur</strong> (site qui scanne).<br />
-      2️⃣ Le système indique si le produit existe déjà, et si ta structure a le droit de le créer.<br />
-      3️⃣ Si la création est possible, tu peux choisir entre <strong>mode AUTO (OCR / DPP)</strong> et
-      <strong>mode MANUEL</strong>.
+      1️⃣ Entrée produit par <strong>ID Traca</strong> (scan code-barres) ou par
+      <strong>DPP (QR app)</strong>.<br />
+      2️⃣ Le système cherche en local (base Traca) et indique si la structure peut créer le produit.<br />
+      3️⃣ En cas de création, JARVIS ouvre la <strong>partie App</strong> pour compléter AUTO (DPP/OCR) ou
+      MANUEL.
     </p>
 
     <!-- Carte 1 : SCAN -->
     <div class="card">
-      <h2>1. Scan / saisie d’un ID Traca</h2>
+      <h2>1. Entrée produit – Scan / saisie ID Traca</h2>
       <div class="row">
         <div>
           <label for="scan_id_traca">ID Traca (12 chiffres)</label>
           <input id="scan_id_traca" placeholder="ex : 170100000001" />
           <div class="helper-text">
-            L’ID Traca reste la clé obligatoire, même en présence d’un QR DPP.
+            Clé obligatoire pour la traçabilité. Le scan DPP prépare la fiche, mais ne remplace pas l’ID
+            Traca.
           </div>
         </div>
         <div>
@@ -361,19 +368,28 @@
         </div>
       </div>
 
-      <!-- Scan live -->
-      <label style="margin-top:0.9rem;">Scan live (recommandé)</label>
+      <!-- 2 boutons d'entrée produit -->
+      <label style="margin-top:0.9rem;">Scan live – choix d’entrée produit</label>
       <div class="row-photo">
-        <button type="button" id="btn_live_scan_start">
-          🎥 Activer le scan live (QR / code-barres)
-        </button>
-        <button type="button" id="btn_live_scan_stop" class="secondary">
-          ⏹️ Stop scan
-        </button>
-        <span class="helper-text">
-          L’opérateur cadre simplement le <strong>code-barres Traca</strong> ou le
-          <strong>QR DPP</strong> dans la zone. JARVIS remplit les champs automatiquement.
-        </span>
+        <div class="stack">
+          <button type="button" id="btn_live_scan_traca">
+            🎥 Scan TRACA (code-barres)
+          </button>
+          <span class="helper-text">
+            L’opérateur cadre le <strong>code-barres Traca</strong> : JARVIS remplit le champ ID Traca en
+            live.
+          </span>
+        </div>
+        <div class="stack">
+          <button type="button" id="btn_live_scan_dpp" class="secondary">
+            🎥 Scan DPP (QR app)
+          </button>
+          <span class="helper-text">
+            L’opérateur cadre le <strong>QR de l’app / DPP</strong> : JARVIS ouvre la
+            <strong>partie App</strong> (Création AUTO) et pré-remplit les champs produit. ID Traca à
+            scanner ensuite.
+          </span>
+        </div>
       </div>
 
       <div
@@ -382,20 +398,28 @@
         style="display:none;"
       >
         <div id="scan_live_view"></div>
-        <div class="helper-text">
-          Cadre le QR ou le code-barres dans le carré. Le scan s’arrête tout seul dès qu’un code est lu.
+        <div class="helper-text" id="scan_live_mode_label">
+          Cadre le code dans le carré.
         </div>
+        <button
+          type="button"
+          id="btn_live_scan_stop"
+          class="secondary"
+          style="margin-top:0.6rem;"
+        >
+          ⏹️ Stop scan
+        </button>
       </div>
 
-      <!-- Photo simple pour OCR / DPP différé -->
-      <label style="margin-top:0.9rem;">ou Photo (mode OCR / DPP)</label>
+      <!-- Photo simple pour OCR / DPP différé (option) -->
+      <label style="margin-top:0.9rem;">ou Photo (mode OCR / DPP différé)</label>
       <div class="row-photo">
         <button type="button" id="btn_photo" class="secondary">
           📸 Prendre une photo (plaque signalétique / QR / code-barres)
         </button>
         <span class="helper-text">
-          Version prototype : la photo est destinée à un traitement OCR / DPP (Google Vision, Arianee…)
-          dans JARVIS. L’ID Traca reste à scanner en live ou à saisir.
+          Photo pour un traitement OCR / DPP ultérieur (Google Vision, Arianee…). L’ID Traca reste à
+          scanner en live ou à saisir.
         </span>
       </div>
       <input
@@ -406,7 +430,7 @@
         style="display:none;"
       />
 
-      <button id="btn_scan">🔍 Analyser le numéro (API Traca)</button>
+      <button id="btn_scan">🔍 Analyser le numéro (API Traca locale)</button>
       <div id="scan_result" class="result" style="display:none;"></div>
     </div>
 
@@ -416,12 +440,12 @@
       <div id="produit_infos" class="result"></div>
     </div>
 
-    <!-- Carte 3 : Création produit (si ID inconnu mais créable par la structure) -->
+    <!-- Carte 3 : Création produit (partie App) -->
     <div class="card" id="card_creation" style="display:none;">
-      <h2>3. Création de ce produit</h2>
+      <h2>3. Création du produit – Partie App JARVIS</h2>
       <p class="helper-text">
         L’ID traca n’existe pas encore en base et ta structure est autorisée à le créer.<br />
-        Choisis d’abord le <strong>point de collecte</strong>, puis le mode de création.
+        Ou bien un DPP a été scanné : JARVIS pré-remplit la fiche, tu complètes et valides.
       </p>
 
       <div class="row">
@@ -437,15 +461,15 @@
 
       <h3 style="margin-top:1rem;">Mode de création</h3>
       <p style="font-size:0.8rem;">
-        <span class="pill orange">AUTO (OCR / DPP)</span>
-        Utilise l’IA/OCR ou le DPP pour proposer marque / modèle / série / âge.<br />
+        <span class="pill orange">AUTO (DPP / OCR)</span>
+        Utilise le DPP ou l’OCR pour proposer marque / modèle / série / âge.<br />
         <span class="pill gray">MANUEL</span>
         Tu saisis famille, sous-famille, modèle, poids.
       </p>
 
       <div class="row">
         <div>
-          <button class="secondary" id="btn_cre_auto">⚙️ Création automatique (OCR / mode hybride)</button>
+          <button class="secondary" id="btn_cre_auto">⚙️ Création automatique (DPP / OCR)</button>
         </div>
         <div>
           <button class="secondary" id="btn_cre_manuel">✍️ Création manuelle</button>
@@ -480,23 +504,23 @@
         </button>
       </div>
 
-      <!-- Sous-formulaire AUTO (OCR / DPP – mock) -->
+      <!-- Sous-formulaire AUTO (DPP / OCR – mock) -->
       <div id="bloc_cre_auto" style="margin-top:1rem;display:none;">
-        <h3>Création AUTO (OCR / DPP – mode hybride)</h3>
+        <h3>Création AUTO (DPP / OCR – mode hybride)</h3>
         <p class="helper-text">
-          Ici, on simule les données remontées par l’OCR ou le DPP (avant branchement live).<br />
-          Plus tard : flux réel photo → Google Vision / DPP → JSON → JARVIS.
+          Données issues du DPP (QR app) ou d’un flux OCR (plaque signalétique).<br />
+          Ici on simule les valeurs, le branchement live viendra ensuite.
         </p>
-        <label for="cre_ocr_marque">Marque (proposée par OCR / DPP)</label>
+        <label for="cre_ocr_marque">Marque (proposée AUTO)</label>
         <input id="cre_ocr_marque" placeholder="ex : BEKO" />
 
-        <label for="cre_ocr_modele">Modèle (proposé par OCR / DPP)</label>
+        <label for="cre_ocr_modele">Modèle (proposé AUTO)</label>
         <input id="cre_ocr_modele" placeholder="ex : WTE6511B0" />
 
-        <label for="cre_ocr_serie">N° de série (proposé par OCR / DPP)</label>
+        <label for="cre_ocr_serie">N° de série (proposé AUTO)</label>
         <input id="cre_ocr_serie" placeholder="ex : 123456789" />
 
-        <label for="cre_ocr_annee">Année (proposée par OCR / DPP)</label>
+        <label for="cre_ocr_annee">Année (proposée AUTO)</label>
         <input id="cre_ocr_annee" type="number" />
 
         <button class="secondary" id="btn_valider_cre_auto">
@@ -513,6 +537,7 @@
 
       let liveScanner = null;
       let liveScanActive = false;
+      let liveScanMode = null; // "TRACA" ou "DPP"
 
       function showScanResult(text) {
         const div = document.getElementById("scan_result");
@@ -632,7 +657,7 @@
 
         if (!id_traca) {
           showScanResult(
-            "❌ Merci de scanner un code-barres TRACA en live ou de saisir un ID traca (12 chiffres)."
+            "❌ Merci de scanner un code-barres TRACA (bouton Scan TRACA) ou de saisir un ID traca (12 chiffres)."
           );
           document.getElementById("card_produit").style.display = "none";
           hideCreationCard();
@@ -646,7 +671,7 @@
           return;
         }
 
-        showScanResult("Analyse en cours…");
+        showScanResult("Analyse locale en cours…");
         document.getElementById("card_produit").style.display = "none";
         hideCreationCard();
 
@@ -671,9 +696,9 @@
           lastScan = data;
           showScanResult(
             data.existe
-              ? "✅ Produit trouvé. Voir les détails ci-dessous."
+              ? "✅ Produit trouvé dans la base locale. Voir les détails ci-dessous."
               : data.peut_creer_produit
-              ? "ℹ️ Produit inconnu, mais création possible par cette structure."
+              ? "ℹ️ Produit inconnu localement, mais création possible par cette structure."
               : "ℹ️ Produit inconnu. Création réservée à la structure d'origine."
           );
           renderProduitInfos(data);
@@ -688,48 +713,69 @@
       function handleLiveScanResult(text) {
         if (!text) return;
 
-        // On stoppe dès qu'il a lu quelque chose pour éviter les doublons
-        stopLiveScan();
+        stopLiveScan(); // stop dès qu'il a lu quelque chose
 
         const trimmed = text.trim();
         const tracaRegex = /^\d{12}$/;
 
-        if (tracaRegex.test(trimmed)) {
-          // Traité comme code-barres TRACA
-          document.getElementById("scan_id_traca").value = trimmed;
-          showScanResult(
-            "✅ Code-barres Traca détecté : " +
-              trimmed +
-              "\nClique sur « Analyser le numéro » pour interroger la base."
-          );
+        if (liveScanMode === "TRACA") {
+          if (tracaRegex.test(trimmed)) {
+            document.getElementById("scan_id_traca").value = trimmed;
+            showScanResult(
+              "✅ Code-barres Traca détecté : " +
+                trimmed +
+                "\nClique sur « Analyser le numéro » pour lancer la recherche locale."
+            );
+          } else {
+            showScanResult(
+              "⚠️ Code lu :\n" +
+                trimmed +
+                "\nCe format ne ressemble pas à un ID Traca (12 chiffres). Merci de recadrer le code-barres Traca."
+            );
+          }
           return;
         }
 
-        // Sinon : traité comme QR DPP
-        document.getElementById("scan_id_traca").value = ""; // ID Traca toujours à scanner/saisir
-        document.getElementById("card_creation").style.display = "block";
-        ouvrirCreationAuto();
+        if (liveScanMode === "DPP") {
+          // Entrée produit par DPP : on ne touche PAS à l'ID Traca
+          document.getElementById("scan_id_traca").value = "";
 
-        // Pour le proto : on met du texte générique, le vrai mapping viendra avec Arianee / DPP
-        document.getElementById("cre_ocr_marque").value = "(depuis DPP)";
-        document.getElementById("cre_ocr_modele").value = trimmed.slice(0, 50);
-        document.getElementById("cre_ocr_serie").value = "";
-        document.getElementById("cre_ocr_annee").value = "";
+          // On ouvre la partie App (carte 3) et le bloc AUTO
+          document.getElementById("card_creation").style.display = "block";
+          ouvrirCreationAuto();
 
-        showScanResult(
-          "✅ QR DPP détecté.\n" +
-            "Contenu brut :\n" +
-            trimmed +
-            "\n\n" +
-            "Les champs produit AUTO sont pré-remplis à partir du DPP.\n" +
-            "⚠️ Merci maintenant de scanner le code-barres TRACA ou de saisir le numéro dans « ID Traca »,\n" +
-            "puis de cliquer sur « Analyser le numéro »."
-        );
+          // Pour le proto : on mappe le contenu dans les champs (dans le live ce sera JSON DPP décodé)
+          document.getElementById("cre_ocr_marque").value = "(depuis DPP)";
+          document.getElementById("cre_ocr_modele").value = trimmed.slice(0, 60);
+          document.getElementById("cre_ocr_serie").value = "";
+          document.getElementById("cre_ocr_annee").value = "";
+
+          document.getElementById("card_creation").scrollIntoView({ behavior: "smooth" });
+
+          showScanResult(
+            "✅ QR DPP détecté.\n" +
+              "Contenu brut :\n" +
+              trimmed +
+              "\n\n" +
+              "Les champs produit AUTO sont pré-remplis dans la partie App.\n" +
+              "⚠️ L’ID Traca doit encore être scanné (bouton Scan TRACA) ou saisi, puis analysé."
+          );
+        }
       }
 
-      function startLiveScan() {
+      function startLiveScan(mode) {
+        liveScanMode = mode;
         const container = document.getElementById("scan_live_container");
+        const label = document.getElementById("scan_live_mode_label");
         container.style.display = "block";
+
+        if (mode === "TRACA") {
+          label.textContent =
+            "Mode Scan TRACA : cadre uniquement le code-barres Traca dans le carré.";
+        } else if (mode === "DPP") {
+          label.textContent =
+            "Mode Scan DPP : cadre le QR de l’app / DPP. JARVIS ouvre la partie App et pré-remplit la fiche.";
+        }
 
         if (liveScanActive) return;
 
@@ -753,16 +799,20 @@
               handleLiveScanResult(decodedText);
             },
             (errorMessage) => {
-              // erreurs de focus / decoding fréquentes : on ignore
+              // bruit normal de détection ratée, on ignore
             }
           )
           .then(() => {
             liveScanActive = true;
-            showScanResult("🎥 Scan live actif. Cadre un code-barres TRACA ou un QR DPP.");
+            showScanResult(
+              mode === "TRACA"
+                ? "🎥 Scan live TRACA actif. Cadre le code-barres Traca."
+                : "🎥 Scan live DPP actif. Cadre le QR de l’app / DPP."
+            );
           })
           .catch((err) => {
             showScanResult(
-              "❌ Impossible d'accéder à la caméra (permissions ou contexte non sécurisé).\nDétail : " +
+              "❌ Impossible d'accéder à la caméra (permissions ou HTTPS manquant).\nDétail : " +
                 err
             );
             container.style.display = "none";
@@ -776,13 +826,17 @@
             .then(() => {
               liveScanner.clear();
               liveScanActive = false;
+              liveScanMode = null;
               document.getElementById("scan_live_container").style.display = "none";
             })
             .catch(() => {
               liveScanActive = false;
+              liveScanMode = null;
               document.getElementById("scan_live_container").style.display = "none";
             });
         } else {
+          liveScanActive = false;
+          liveScanMode = null;
           document.getElementById("scan_live_container").style.display = "none";
         }
       }
@@ -791,9 +845,6 @@
       function simulateVisionResult(file) {
         const name = (file.name || "").toLowerCase();
 
-        // Pour les tests :
-        // - si le nom contient "dpp" ou "qr" -> on simule un QR DPP complet (sans ID Traca)
-        // - sinon -> simple code-barres Traca
         if (name.includes("dpp") || name.includes("qr")) {
           return {
             type: "DPP_QR",
@@ -833,10 +884,8 @@
                 ".\nClique sur « Analyser le numéro » pour interroger la base."
             );
           } else if (res.type === "DPP_QR") {
-            // On NE remplit PAS l’ID Traca : il reste à scanner ou saisir
             document.getElementById("scan_id_traca").value = "";
 
-            // Pré-remplir les champs produit (mode AUTO)
             document.getElementById("card_creation").style.display = "block";
             ouvrirCreationAuto();
             document.getElementById("cre_ocr_marque").value = res.marque || "";
@@ -844,11 +893,12 @@
             document.getElementById("cre_ocr_serie").value = res.serie || "";
             document.getElementById("cre_ocr_annee").value = res.annee || "";
 
+            document.getElementById("card_creation").scrollIntoView({ behavior: "smooth" });
+
             showScanResult(
               "✅ QR DPP détecté (via photo).\n" +
-                "- Données produit pré-remplies en mode AUTO (marque / modèle / série / année).\n" +
-                "⚠️ Merci maintenant de scanner le code-barres TRACA ou de saisir le numéro dans « ID Traca »,\n" +
-                "puis de cliquer sur « Analyser le numéro »."
+                "Les champs produit AUTO sont pré-remplis dans la partie App.\n" +
+                "⚠️ L’ID Traca doit encore être scanné (Scan TRACA) ou saisi, puis analysé."
             );
           }
         }, 800);
@@ -858,7 +908,7 @@
         document.getElementById("photo_input").click();
       }
 
-      // --------- Création AUTO (mock OCR / DPP) ----------
+      // --------- Création AUTO / MANUELLE (mock) ----------
       function ouvrirCreationAuto() {
         const bloc = document.getElementById("bloc_cre_auto");
         const blocManuel = document.getElementById("bloc_cre_manuel");
@@ -897,13 +947,13 @@
         }
 
         const marque =
-          document.getElementById("cre_ocr_marque").value.trim() || "(marque OCR / DPP simulée)";
+          document.getElementById("cre_ocr_marque").value.trim() || "(marque AUTO simulée)";
         const modele =
-          document.getElementById("cre_ocr_modele").value.trim() || "(modèle OCR / DPP simulé)";
+          document.getElementById("cre_ocr_modele").value.trim() || "(modèle AUTO simulé)";
         const serie =
-          document.getElementById("cre_ocr_serie").value.trim() || "(série OCR / DPP simulée)";
+          document.getElementById("cre_ocr_serie").value.trim() || "(série AUTO simulée)";
         const annee =
-          document.getElementById("cre_ocr_annee").value.trim() || "(année OCR / DPP simulée)";
+          document.getElementById("cre_ocr_annee").value.trim() || "(année AUTO simulée)";
 
         const lignes = [];
         lignes.push("✅ Création AUTO (mock) enregistrée côté front (sans appel API).");
@@ -916,7 +966,7 @@
         lignes.push("Année (AUTO)       : " + annee);
         lignes.push("");
         lignes.push(
-          "Étape suivante JARVIS : envoyer ces données vers l'API /collecte/creer + flux OCR / DPP."
+          "Étape suivante JARVIS : envoyer ces données vers l'API /collecte/creer + flux DPP / OCR."
         );
 
         div.textContent = lignes.join("\n");
@@ -977,8 +1027,11 @@
         .getElementById("photo_input")
         .addEventListener("change", handlePhotoSelected);
       document
-        .getElementById("btn_live_scan_start")
-        .addEventListener("click", startLiveScan);
+        .getElementById("btn_live_scan_traca")
+        .addEventListener("click", () => startLiveScan("TRACA"));
+      document
+        .getElementById("btn_live_scan_dpp")
+        .addEventListener("click", () => startLiveScan("DPP"));
       document
         .getElementById("btn_live_scan_stop")
         .addEventListener("click", stopLiveScan);
