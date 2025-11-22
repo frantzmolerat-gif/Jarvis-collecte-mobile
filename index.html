@@ -1,304 +1,632 @@
 <!doctype html>
 <html lang="fr">
   <head>
-    <meta charset="UTF-8" />
+    <meta charset="utf-8" />
+    <title>Jarvis – Collecte</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Jarvis – Collecte mobile</title>
+
     <style>
+      :root {
+        --bg: #f3f4f6;
+        --card-bg: #ffffff;
+        --accent: #2563eb;
+        --accent-soft: #e0edff;
+        --accent-text: #1d4ed8;
+        --text: #111827;
+        --muted: #6b7280;
+        --border: #e5e7eb;
+        --danger: #b91c1c;
+        --radius-lg: 18px;
+        --shadow-soft: 0 12px 30px rgba(15, 23, 42, 0.08);
+      }
+
       * {
         box-sizing: border-box;
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       }
 
       body {
         margin: 0;
-        padding: 0;
-        background: #f3f4f6;
-        color: #111827;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          sans-serif;
+        background: var(--bg);
+        color: var(--text);
       }
 
       .app {
-        max-width: 480px;
+        max-width: 650px;
         margin: 0 auto;
         padding: 16px;
       }
 
-      h1 {
-        font-size: 1.4rem;
-        margin: 0 0 8px;
+      header {
         text-align: center;
-      }
-
-      .subtitle {
-        text-align: center;
-        font-size: 0.85rem;
-        color: #4b5563;
-        margin-bottom: 16px;
-      }
-
-      .card {
-        background: #ffffff;
-        border-radius: 12px;
-        padding: 12px 14px;
         margin-bottom: 14px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
       }
 
-      .card-title {
-        font-size: 1rem;
-        font-weight: 600;
-        margin-bottom: 8px;
+      header h1 {
+        margin: 4px 0;
+        font-size: 22px;
       }
 
-      label {
-        font-size: 0.85rem;
-        display: block;
-        margin-bottom: 4px;
-      }
-
-      input[type="text"] {
-        width: 100%;
-        padding: 8px 10px;
-        border-radius: 8px;
-        border: 1px solid #d1d5db;
-        font-size: 0.95rem;
-      }
-
-      .btn {
-        width: 100%;
-        padding: 10px 12px;
-        margin-top: 6px;
-        border-radius: 999px;
-        border: none;
-        font-size: 0.95rem;
-        font-weight: 600;
-        cursor: pointer;
-      }
-
-      .btn-primary {
-        background: #16a34a;
-        color: white;
-      }
-
-      .btn-secondary {
-        background: #e5e7eb;
-        color: #111827;
-      }
-
-      .btn:active {
-        transform: scale(0.98);
-      }
-
-      .preview-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 6px;
-        margin-top: 8px;
-      }
-
-      .preview-slot {
-        background: #f9fafb;
-        border-radius: 8px;
-        padding: 4px;
-        border: 1px dashed #d1d5db;
-        text-align: center;
-        font-size: 0.75rem;
-      }
-
-      .preview-slot img {
-        max-width: 100%;
-        max-height: 80px;
-        border-radius: 6px;
-        display: block;
-        margin: 0 auto 4px;
-      }
-
-      .slot-title {
-        font-weight: 600;
-        margin-bottom: 2px;
-        font-size: 0.75rem;
-      }
-
-      .jarvis-output {
-        font-size: 0.9rem;
-        white-space: pre-line;
+      header .phase {
+        font-size: 13px;
+        color: var(--muted);
       }
 
       .badge {
         display: inline-block;
-        padding: 2px 8px;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        padding: 3px 8px;
         border-radius: 999px;
-        font-size: 0.7rem;
-        background: #e5e7eb;
-        color: #374151;
-        margin-right: 4px;
+        background: var(--accent-soft);
+        color: var(--accent-text);
+        margin-bottom: 4px;
       }
 
-      .badge-ok {
-        background: #dcfce7;
-        color: #166534;
+      .card {
+        background: var(--card-bg);
+        border-radius: var(--radius-lg);
+        padding: 14px 14px 12px;
+        box-shadow: var(--shadow-soft);
+        border: 1px solid var(--border);
+        margin-bottom: 12px;
       }
 
-      .badge-warn {
-        background: #fef3c7;
-        color: #92400e;
+      .card-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 10px;
+      }
+
+      .step-number {
+        width: 32px;
+        height: 32px;
+        border-radius: 999px;
+        background: var(--accent-soft);
+        color: var(--accent-text);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 15px;
+      }
+
+      .card-title {
+        font-weight: 600;
+        font-size: 15px;
+      }
+
+      .card-sub {
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      label {
+        display: block;
+        font-size: 12px;
+        margin-bottom: 4px;
+        color: var(--muted);
+      }
+
+      input[type="text"],
+      input[type="number"] {
+        width: 100%;
+        padding: 8px 10px;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+        font-size: 13px;
+      }
+
+      .id-row {
+        display: grid;
+        grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+        gap: 8px;
+        align-items: end;
+      }
+
+      .scan-btn {
+        width: 100%;
+        border-radius: 999px;
+        border: 1px solid #bfdbfe;
+        background: #eff6ff;
+        color: #1d4ed8;
+        font-size: 12px;
+        padding: 8px 10px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+      }
+
+      .scan-btn:active {
+        transform: translateY(1px);
+      }
+
+      .upload-zone {
+        border-radius: 999px;
+        border: 1px dashed #cbd5f5;
+        background: #f9fafb;
+        padding: 9px 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        color: var(--muted);
+        cursor: pointer;
+      }
+
+      .upload-zone span {
+        pointer-events: none;
+      }
+
+      .upload-zone input[type="file"] {
+        display: none;
+      }
+
+      .filename {
+        margin-top: 5px;
+        font-size: 11px;
+        color: var(--muted);
+      }
+
+      .help-text {
+        font-size: 11px;
+        color: var(--muted);
+        margin-top: 4px;
+      }
+
+      .btn-primary {
+        width: 100%;
+        padding: 11px 14px;
+        border-radius: 999px;
+        border: none;
+        background: linear-gradient(135deg, #22c55e, #16a34a);
+        color: #ecfdf5;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      .btn-primary:active {
+        transform: translateY(1px);
+      }
+
+      .status-bar {
+        margin-top: 8px;
+        font-size: 12px;
+        padding: 8px 10px;
+        border-radius: 999px;
+        background: #eff6ff;
+        color: #1d4ed8;
+        border: 1px solid #bfdbfe;
+      }
+
+      .status-bar.error {
+        background: #fef2f2;
+        color: #b91c1c;
+        border-color: #fecaca;
+      }
+
+      .result-box {
+        margin-top: 10px;
+        border-radius: 14px;
+        border: 1px solid var(--border);
+        background: #f9fafb;
+        padding: 10px;
+        font-size: 11px;
+        max-height: 220px;
+        overflow: auto;
+        white-space: pre-wrap;
+      }
+
+      .footer {
+        margin-top: 10px;
+        font-size: 11px;
+        color: var(--muted);
+        text-align: center;
+      }
+
+      /* Overlay scanner code-barres */
+      .scanner-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.8);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+      }
+
+      .scanner-box {
+        width: 100%;
+        max-width: 420px;
+        background: #020617;
+        border-radius: 18px;
+        padding: 12px;
+        border: 1px solid #1f2937;
+        color: #e5e7eb;
+      }
+
+      .scanner-title {
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 6px;
+      }
+
+      .scanner-help {
+        font-size: 11px;
+        color: #9ca3af;
+        margin-bottom: 6px;
+      }
+
+      .scanner-video-wrapper {
+        border-radius: 14px;
+        overflow: hidden;
+        border: 1px solid #1f2937;
+        background: #000;
+      }
+
+      #scanner-video {
+        width: 100%;
+        display: block;
+      }
+
+      .scanner-actions {
+        margin-top: 8px;
+        display: flex;
+        justify-content: flex-end;
+      }
+
+      .scanner-stop-btn {
+        border-radius: 999px;
+        border: none;
+        padding: 7px 12px;
+        font-size: 12px;
+        background: #f97316;
+        color: #111827;
+        cursor: pointer;
+      }
+
+      @media (max-width: 520px) {
+        .id-row {
+          grid-template-columns: minmax(0, 1fr);
+        }
       }
     </style>
   </head>
+
   <body>
     <div class="app">
-      <h1>Jarvis – Collecte</h1>
-      <div class="subtitle">
-        Phase 1 – Test mobile (photo ou fichier)
-      </div>
+      <header>
+        <div class="badge">Jarvis – Phase collecte</div>
+        <h1>Jarvis – Collecte</h1>
+        <div class="phase">Phase 1 – Test mobile (photo ou fichier)</div>
+      </header>
 
-      <!-- ID TRACA (optionnel) -->
-      <div class="card">
-        <div class="card-title">1️⃣ Identifiant Traca (optionnel)</div>
-        <label for="id-traca">ID Traca Envie</label>
-        <input
-          id="id-traca"
-          type="text"
-          placeholder="Ex : 210100012345"
-          autocomplete="off"
-        />
-      </div>
-
-      <!-- OPTION 1 : PHOTO UNIQUE -->
-      <div class="card">
-        <div class="card-title">
-          2️⃣ Option A – Une seule photo (face, plaque ou Traca)
-        </div>
-        <p style="font-size: 0.8rem; margin: 0 0 6px;">
-          Jarvis recevra une photo unique (il décidera plus tard si c’est une
-          face, une plaque ou un code-barres).
-        </p>
-        <button id="btn-photo-unique" class="btn btn-secondary">
-          📸 Prendre / choisir une photo
-        </button>
-        <input
-          id="input-photo-unique"
-          type="file"
-          accept="image/*"
-          capture="environment"
-          style="display: none;"
-        />
-
-        <div id="preview-unique" class="preview-grid" style="margin-top: 8px;">
-          <div class="preview-slot" id="preview-unique-slot">
-            <div class="slot-title">Photo unique</div>
-            <span style="font-size: 0.75rem; color: #6b7280;"
-              >Aucune photo sélectionnée</span
-            >
+      <!-- Étape 1 : ID Traca -->
+      <section class="card">
+        <div class="card-header">
+          <div class="step-number">1</div>
+          <div>
+            <div class="card-title">Identifiant Traca (optionnel)</div>
+            <div class="card-sub">
+              Saisi par scan ou clavier. Sert à rattacher la collecte à un appareil.
+            </div>
           </div>
         </div>
-      </div>
 
-      <!-- OPTION 2 : 3 PHOTOS DISTINCTES -->
-      <div class="card">
-        <div class="card-title">
-          3️⃣ Option B – Trois photos distinctes
-        </div>
-        <p style="font-size: 0.8rem; margin: 0 0 6px;">
-          Face, plaque signalétique et étiquette Traca peuvent être prises ou
-          choisies séparément.
-        </p>
-
-        <button id="btn-face" class="btn btn-secondary">
-          😀 Face appareil
-        </button>
-        <input
-          id="input-face"
-          type="file"
-          accept="image/*"
-          capture="environment"
-          style="display: none;"
-        />
-
-        <button id="btn-plaque" class="btn btn-secondary">
-          🪪 Plaque signalétique
-        </button>
-        <input
-          id="input-plaque"
-          type="file"
-          accept="image/*"
-          capture="environment"
-          style="display: none;"
-        />
-
-        <button id="btn-traca" class="btn btn-secondary">
-          🏷️ Étiquette Traca / code-barres
-        </button>
-        <input
-          id="input-traca"
-          type="file"
-          accept="image/*"
-          capture="environment"
-          style="display: none;"
-        />
-
-        <div class="preview-grid">
-          <div class="preview-slot" id="preview-face">
-            <div class="slot-title">Face</div>
-            <span style="font-size: 0.75rem; color: #6b7280;"
-              >Aucune photo</span
-            >
+        <div class="id-row">
+          <div>
+            <label for="id-traca">ID Traca Envie</label>
+            <input
+              id="id-traca"
+              type="text"
+              placeholder="Ex : 210100012345"
+              inputmode="numeric"
+            />
           </div>
-          <div class="preview-slot" id="preview-plaque">
-            <div class="slot-title">Plaque</div>
-            <span style="font-size: 0.75rem; color: #6b7280;"
-              >Aucune photo</span
-            >
-          </div>
-          <div class="preview-slot" id="preview-traca">
-            <div class="slot-title">Traca</div>
-            <span style="font-size: 0.75rem; color: #6b7280;"
-              >Aucune photo</span
-            >
+          <div>
+            <button id="btn-scan-barcode" class="scan-btn">
+              📡 Scanner le code-barres
+            </button>
           </div>
         </div>
-      </div>
+      </section>
 
-      <!-- BOUTON ANALYSE -->
-      <div class="card">
-        <div class="card-title">4️⃣ Lancer l'analyse Jarvis (simulation)</div>
-        <button id="btn-analyse" class="btn btn-primary">
-          🤖 Analyser avec Jarvis
+      <!-- Étape 2 : Option A -->
+      <section class="card">
+        <div class="card-header">
+          <div class="step-number">2</div>
+          <div>
+            <div class="card-title">Option A – Une seule photo (face, plaque ou Traca)</div>
+            <div class="card-sub">
+              Jarvis reçoit une photo unique (il décidera plus tard s’il s’agit d’une face,
+              d’une plaque ou d’un code-barres.
+            </div>
+          </div>
+        </div>
+
+        <label>Photo unique</label>
+        <label class="upload-zone">
+          <span>📸 Prendre / choisir une photo</span>
+          <input
+            id="photo-unique"
+            type="file"
+            accept="image/*"
+            capture="environment"
+          />
+        </label>
+        <div id="filename-unique" class="filename">Aucune photo sélectionnée</div>
+
+        <div class="help-text">
+          Utilise cette option si tu vas tester Jarvis avec une seule photo pour commencer.
+        </div>
+      </section>
+
+      <!-- Étape 3 : Option B -->
+      <section class="card">
+        <div class="card-header">
+          <div class="step-number">3</div>
+          <div>
+            <div class="card-title">Option B – Trois photos distinctes</div>
+            <div class="card-sub">
+              Face, plaque signalétique et étiquette Traca peuvent être prises ou choisies
+              séparément.
+            </div>
+          </div>
+        </div>
+
+        <label>Photos séparées</label>
+
+        <label class="upload-zone">
+          <span>📷 Face appareil</span>
+          <input
+            id="photo-face"
+            type="file"
+            accept="image/*"
+            capture="environment"
+          />
+        </label>
+        <div id="filename-face" class="filename">Face : aucune photo</div>
+
+        <label class="upload-zone">
+          <span>🏷️ Plaque signalétique</span>
+          <input
+            id="photo-plaque"
+            type="file"
+            accept="image/*"
+            capture="environment"
+          />
+        </label>
+        <div id="filename-plaque" class="filename">Plaque : aucune photo</div>
+
+        <label class="upload-zone">
+          <span>📄 Étiquette Traca / code-barres</span>
+          <input
+            id="photo-traca"
+            type="file"
+            accept="image/*"
+            capture="environment"
+          />
+        </label>
+        <div id="filename-traca" class="filename">Traca : aucune photo</div>
+
+        <div class="help-text">
+          Pour les tests complets : 1 face + 1 plaque signalétique + 1 étiquette Traca.
+        </div>
+      </section>
+
+      <!-- Étape 4 : Envoi Jarvis -->
+      <section class="card">
+        <div class="card-header">
+          <div class="step-number">4</div>
+          <div>
+            <div class="card-title">Analyse avec Jarvis / OCR</div>
+            <div class="card-sub">
+              Envoie les images et l’ID Traca vers le backend (Google Vision, règles Jarvis…).
+            </div>
+          </div>
+        </div>
+
+        <button id="btn-analyser" class="btn-primary">
+          🚀 Analyser avec Jarvis
         </button>
 
-        <div id="jarvis-result" class="jarvis-output" style="margin-top: 10px;">
-          Jarvis n'a pas encore reçu de données.
+        <div id="status" class="status-bar">
+          En attente d’images…
         </div>
-      </div>
 
-      <div style="text-align: center; font-size: 0.7rem; color: #9ca3af;">
-        Jarvis Phase 1 – Interface de test. Les photos restent sur l'appareil
-        (pas encore d'envoi serveur).
+        <div id="result" class="result-box">
+          Aucun résultat pour le moment.
+        </div>
+      </section>
+
+      <div class="footer">
+        Prototype Jarvis Collecte – base locale.  
+        Le bouton ci-dessus appelle une API backend configurable.
       </div>
     </div>
 
+    <!-- OVERLAY SCANNER CODE-BARRES -->
+    <div id="scanner-overlay" class="scanner-overlay">
+      <div class="scanner-box">
+        <div class="scanner-title">Scanner le code-barres Traca</div>
+        <div class="scanner-help">
+          Vise l’étiquette Traca avec la caméra. Le numéro sera rempli automatiquement.
+        </div>
+        <div class="scanner-video-wrapper">
+          <video id="scanner-video" playsinline></video>
+        </div>
+        <div class="scanner-actions">
+          <button id="btn-stop-scan" class="scanner-stop-btn">Arrêter</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Librairie ZXing pour lecture code-barres -->
+    <script src="https://unpkg.com/@zxing/browser@latest"></script>
+
     <script>
-      // --- Références éléments DOM ---
+      // 👉 Point d’entrée backend (à adapter plus tard)
+      const API_URL = "/api/collecte/mobile";
+
       const idTracaInput = document.getElementById("id-traca");
+      const fileUnique = document.getElementById("photo-unique");
+      const fileFace = document.getElementById("photo-face");
+      const filePlaque = document.getElementById("photo-plaque");
+      const fileTraca = document.getElementById("photo-traca");
 
-      const btnPhotoUnique = document.getElementById("btn-photo-unique");
-      const inputPhotoUnique = document.getElementById("input-photo-unique");
-      const previewUniqueSlot = document.getElementById("preview-unique-slot");
+      const fnUnique = document.getElementById("filename-unique");
+      const fnFace = document.getElementById("filename-face");
+      const fnPlaque = document.getElementById("filename-plaque");
+      const fnTraca = document.getElementById("filename-traca");
 
-      const btnFace = document.getElementById("btn-face");
-      const btnPlaque = document.getElementById("btn-plaque");
-      const btnTraca = document.getElementById("btn-traca");
+      const btnAnalyser = document.getElementById("btn-analyser");
+      const statusEl = document.getElementById("status");
+      const resultEl = document.getElementById("result");
 
-      const inputFace = document.getElementById("input-face");
-      const inputPlaque = document.getElementById("input-plaque");
-      const inputTraca = document.getElementById("input-traca");
+      const btnScanBarcode = document.getElementById("btn-scan-barcode");
+      const scannerOverlay = document.getElementById("scanner-overlay");
+      const scannerVideo = document.getElementById("scanner-video");
+      const btnStopScan = document.getElementById("btn-stop-scan");
 
-      const previewFace = document.getElementById("preview-face");
-      const previewPlaque = document.getElementById("preview-plaque");
-      const previewTraca = document.getElementById("preview-traca");
+      let barcodeReader = null;
+      let barcodeControls = null;
 
-      const btnAnalyse = document.getElementById("btn-analyse");
-      const jarvisResult = document.getElementById("jarvis-result");
+      function fileLabel(input, labelEl, prefix) {
+        const f = input.files[0];
+        if (!f) {
+          labelEl.textContent = prefix + " : aucune photo";
+        } else {
+          const kb = Math.round(f.size / 1024);
+          labelEl.textContent = `${prefix} : ${f.name} (${kb} Ko)`;
+        }
+      }
 
-      // --- État "mémoire" côté front ---
-      let fileUnique
+      fileUnique.addEventListener("change", () =>
+        fileLabel(fileUnique, fnUnique, "Photo unique")
+      );
+      fileFace.addEventListener("change", () =>
+        fileLabel(fileFace, fnFace, "Face")
+      );
+      filePlaque.addEventListener("change", () =>
+        fileLabel(filePlaque, fnPlaque, "Plaque")
+      );
+      fileTraca.addEventListener("change", () =>
+        fileLabel(fileTraca, fnTraca, "Traca")
+      );
+
+      function setStatus(msg, isError) {
+        statusEl.textContent = msg;
+        statusEl.classList.toggle("error", !!isError);
+      }
+
+      // --------- Scanner code-barres ID Traca ----------
+      btnScanBarcode.addEventListener("click", async () => {
+        if (!window.ZXingBrowser) {
+          alert("Librairie ZXing non chargée.");
+          return;
+        }
+
+        scannerOverlay.style.display = "flex";
+        setStatus("Ouverture du scanner code-barres…", false);
+
+        try {
+          barcodeReader = new ZXingBrowser.BrowserMultiFormatReader();
+          const devices =
+            await ZXingBrowser.BrowserCodeReader.listVideoInputDevices();
+
+          // On essaie de prendre la caméra arrière si dispo
+          const deviceId =
+            (devices[devices.length - 1] && devices[devices.length - 1].deviceId) ||
+            undefined;
+
+          barcodeControls = await barcodeReader.decodeFromVideoDevice(
+            deviceId,
+            scannerVideo,
+            (result, err, controls) => {
+              if (result) {
+                const text = result.getText();
+                idTracaInput.value = text;
+                setStatus("Code-barres scanné : " + text, false);
+                controls.stop();
+                scannerOverlay.style.display = "none";
+              }
+            }
+          );
+        } catch (e) {
+          console.error(e);
+          setStatus("Erreur scanner : " + e.message, true);
+          scannerOverlay.style.display = "none";
+        }
+      });
+
+      btnStopScan.addEventListener("click", () => {
+        if (barcodeControls) {
+          barcodeControls.stop();
+        }
+        scannerOverlay.style.display = "none";
+      });
+
+      // --------- Envoi à Jarvis / backend ----------
+      btnAnalyser.addEventListener("click", async () => {
+        const idTraca = idTracaInput.value.trim();
+        const hasUnique = fileUnique.files.length > 0;
+        const hasFace = fileFace.files.length > 0;
+        const hasPlaque = filePlaque.files.length > 0;
+        const hasTraca = fileTraca.files.length > 0;
+
+        if (!hasUnique && !hasFace && !hasPlaque && !hasTraca) {
+          alert("Merci de choisir au moins une photo (Option A ou B).");
+          return;
+        }
+
+        const form = new FormData();
+        if (idTraca) form.append("id_traca", idTraca);
+
+        if (hasUnique) {
+          form.append("mode", "A");
+          form.append("photo_unique", fileUnique.files[0]);
+        } else {
+          form.append("mode", "B");
+          if (hasFace) form.append("photo_face", fileFace.files[0]);
+          if (hasPlaque) form.append("photo_plaque", filePlaque.files[0]);
+          if (hasTraca) form.append("photo_traca", fileTraca.files[0]);
+        }
+
+        setStatus("Envoi des images à Jarvis…", false);
+        resultEl.textContent = "En cours…";
+
+        try {
+          const resp = await fetch(API_URL, {
+            method: "POST",
+            body: form,
+          });
+
+          let data;
+          try {
+            data = await resp.json();
+          } catch (e) {
+            throw new Error("Réponse non JSON. Code HTTP " + resp.status);
+          }
+
+          if (!resp.ok) {
+            setStatus("Erreur API (HTTP " + resp.status + ")", true);
+          } else {
+            setStatus("Analyse terminée.", false);
+          }
+
+          resultEl.textContent = JSON.stringify(data, null, 2);
+        } catch (err) {
+          console.error(err);
+          setStatus("Erreur réseau ou serveur : " + err.message, true);
+          resultEl.textContent = "Erreur : " + err.message;
+        }
+      });
+    </script>
+  </body>
+</html>
