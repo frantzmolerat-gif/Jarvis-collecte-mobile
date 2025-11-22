@@ -67,4 +67,642 @@
         border-radius: 999px;
         padding: 0.2rem 0.6rem;
         border: 1px solid rgba(255, 255, 255, 0.5);
-        opaci
+        opacity: 0.9;
+      }
+
+      .topbar-badge {
+        background: var(--envie-orange);
+        color: #ffffff;
+        font-size: 0.75rem;
+        font-weight: 600;
+        border-radius: 999px;
+        padding: 0.3rem 0.75rem;
+        white-space: nowrap;
+      }
+
+      h1 {
+        margin: 0.75rem 0 0.25rem;
+        font-size: 1.15rem;
+        color: var(--envie-vert-fonce);
+      }
+
+      p.lead {
+        font-size: 0.9rem;
+        max-width: 800px;
+        margin: 0 0 1rem;
+        color: var(--text-muted);
+      }
+
+      .card {
+        background: var(--bg-card);
+        border-radius: 14px;
+        padding: 1rem 1.25rem;
+        margin-bottom: 1.25rem;
+        box-shadow: 0 2px 7px rgba(0, 0, 0, 0.06);
+        border: 1px solid rgba(0, 0, 0, 0.03);
+      }
+
+      h2 {
+        font-size: 1rem;
+        margin-top: 0;
+        margin-bottom: 0.4rem;
+        color: var(--envie-vert-fonce);
+      }
+
+      h3 {
+        font-size: 0.95rem;
+        margin-bottom: 0.4rem;
+        color: var(--envie-vert-moyen);
+      }
+
+      label {
+        display: block;
+        font-size: 0.85rem;
+        margin-top: 0.6rem;
+        color: var(--text-main);
+      }
+
+      input,
+      select,
+      textarea {
+        width: 100%;
+        padding: 0.45rem 0.55rem;
+        margin-top: 0.2rem;
+        border-radius: 8px;
+        border: 1px solid var(--border-soft);
+        font-size: 0.9rem;
+        box-sizing: border-box;
+        background: #ffffff;
+      }
+
+      input:focus,
+      select:focus,
+      textarea:focus {
+        outline: 2px solid var(--envie-vert-moyen);
+        outline-offset: 1px;
+        border-color: var(--envie-vert-moyen);
+      }
+
+      textarea {
+        resize: vertical;
+        min-height: 3rem;
+      }
+
+      button {
+        margin-top: 0.8rem;
+        padding: 0.55rem 1.1rem;
+        border-radius: 999px;
+        border: none;
+        font-size: 0.9rem;
+        cursor: pointer;
+        background: var(--envie-vert-moyen);
+        color: #ffffff;
+        font-weight: 550;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.3rem;
+      }
+
+      button.secondary {
+        background: transparent;
+        color: var(--envie-vert-fonce);
+        border: 1px solid var(--envie-vert-fonce);
+      }
+
+      button.secondary:hover {
+        background: var(--envie-vert-clair);
+      }
+
+      button.danger {
+        background: #e53e3e;
+      }
+
+      button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+
+      .row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.75rem;
+      }
+
+      .result {
+        margin-top: 0.7rem;
+        padding: 0.6rem 0.7rem;
+        font-size: 0.85rem;
+        background: #f8fafc;
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
+        white-space: pre-wrap;
+        color: #1f2933;
+      }
+
+      .pill {
+        display: inline-block;
+        padding: 0.15rem 0.5rem;
+        border-radius: 999px;
+        font-size: 0.75rem;
+        margin-right: 0.4rem;
+        margin-top: 0.2rem;
+        background: #e2f4ec;
+        color: var(--envie-vert-fonce);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+      }
+
+      .pill.red {
+        background: #fde2e2;
+        color: #8b1f1f;
+      }
+
+      .pill.gray {
+        background: #e2e8f0;
+        color: #334155;
+      }
+
+      .pill.orange {
+        background: #ffe7d5;
+        color: var(--envie-orange);
+      }
+
+      .helper-text {
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        margin-top: 0.25rem;
+      }
+
+      /* Responsive mobile (collecteur) */
+      @media (max-width: 700px) {
+        body {
+          padding: 1rem 0.8rem;
+        }
+
+        .row {
+          grid-template-columns: 1fr;
+        }
+
+        .topbar {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .topbar-badge {
+          align-self: flex-start;
+        }
+
+        h1 {
+          font-size: 1.1rem;
+        }
+
+        button {
+          width: 100%;
+        }
+      }
+
+      /* Confort back office (écran large) */
+      @media (min-width: 1000px) {
+        body {
+          max-width: 1100px;
+          margin: 0 auto;
+          padding: 2rem 0;
+        }
+
+        .topbar {
+          border-radius: 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Bandeau haut JARVIS / Envie -->
+    <header class="topbar">
+      <div class="topbar-main">
+        <div class="topbar-title">JARVIS · Envie</div>
+        <div class="topbar-subtitle">
+          Interface de tri & traçabilité – compatible collecte mobile et back office
+        </div>
+      </div>
+      <div>
+        <div class="topbar-tag">Prototype v1</div>
+        <div class="topbar-badge">L’IA au service de l’insertion</div>
+      </div>
+    </header>
+
+    <h1>Traca Envie – Interface Scan & Création</h1>
+    <p class="lead">
+      1️⃣ On commence toujours par <strong>l’ID Traca</strong> (scan ou saisie) et la
+      <strong>structure opérateur</strong> (site qui scanne).<br />
+      2️⃣ Le système indique si le produit existe déjà, et si ta structure a le droit de le créer.<br />
+      3️⃣ Si la création est possible, tu peux choisir entre <strong>mode AUTO (OCR)</strong> et
+      <strong>mode MANUEL</strong>.
+    </p>
+
+    <!-- Carte 1 : SCAN -->
+    <div class="card">
+      <h2>1. Scan / saisie d’un ID Traca</h2>
+      <div class="row">
+        <div>
+          <label for="scan_id_traca">ID Traca (12 chiffres)</label>
+          <input id="scan_id_traca" placeholder="ex : 170100000001" />
+          <div class="helper-text">
+            Pour les tests : tu peux saisir un ID existant ou un ID factice pour simuler un produit inconnu.
+          </div>
+        </div>
+        <div>
+          <label for="scan_struct_op">Structure opérateur</label>
+          <select id="scan_struct_op">
+            <option value="1701">1701 – Envie Drôme Ardèche</option>
+            <option value="1001">1001 – Envie Tourcoing</option>
+          </select>
+        </div>
+      </div>
+      <button id="btn_scan">🔍 Analyser le numéro</button>
+      <div id="scan_result" class="result" style="display:none;"></div>
+    </div>
+
+    <!-- Carte 2 : Résumé produit -->
+    <div class="card" id="card_produit" style="display:none;">
+      <h2>2. Résultat (existence + droits)</h2>
+      <div id="produit_infos" class="result"></div>
+    </div>
+
+    <!-- Carte 3 : Création produit (si ID inconnu mais créable par la structure) -->
+    <div class="card" id="card_creation" style="display:none;">
+      <h2>3. Création de ce produit</h2>
+      <p class="helper-text">
+        L’ID traca n’existe pas encore en base et ta structure est autorisée à le créer.<br />
+        Choisis d’abord le <strong>point de collecte</strong>, puis le mode de création.
+      </p>
+
+      <div class="row">
+        <div>
+          <label for="cre_point_code">Point de collecte (code interne, ex : PC01)</label>
+          <input id="cre_point_code" />
+        </div>
+        <div>
+          <label for="cre_point_lib">Libellé point de collecte</label>
+          <input id="cre_point_lib" placeholder="ex : Boulanger, Déchetterie X…" />
+        </div>
+      </div>
+
+      <h3 style="margin-top:1rem;">Mode de création</h3>
+      <p style="font-size:0.8rem;">
+        <span class="pill orange">AUTO (OCR)</span>
+        Utilise l’IA/OCR pour proposer marque / modèle / série / âge.<br />
+        <span class="pill gray">MANUEL</span>
+        Tu saisis famille, sous-famille, modèle, poids.
+      </p>
+
+      <div class="row">
+        <div>
+          <button class="secondary" id="btn_cre_auto">⚙️ Création automatique (OCR / mode hybride)</button>
+        </div>
+        <div>
+          <button class="secondary" id="btn_cre_manuel">✍️ Création manuelle</button>
+        </div>
+      </div>
+
+      <!-- Sous-formulaire MANUEL -->
+      <div id="bloc_cre_manuel" style="margin-top:1rem;display:none;">
+        <h3>Création MANUELLE</h3>
+        <label for="cre_famille">Famille Envie</label>
+        <select id="cre_famille">
+          <option value="">-- choisir --</option>
+          <option value="Froid">Froid</option>
+          <option value="Lavage">Lavage</option>
+          <option value="Cuisson">Cuisson</option>
+          <option value="PEM">PEM</option>
+          <option value="Brun">Brun</option>
+          <option value="Gris">Gris</option>
+        </select>
+
+        <label for="cre_sous_famille">Sous-famille (libellé Envie)</label>
+        <input id="cre_sous_famille" placeholder="ex : réfrigérateur américain, lave-linge hublot…" />
+
+        <label for="cre_modele">Modèle (manuel ou suggéré plus tard via Odaia)</label>
+        <input id="cre_modele" placeholder="ex : WTE6511B0" />
+
+        <label for="cre_poids">Poids (kg)</label>
+        <input id="cre_poids" type="number" step="0.1" />
+
+        <button class="secondary" id="btn_valider_cre_manuel">
+          ✅ Valider la création manuelle (mock)
+        </button>
+      </div>
+
+      <!-- Sous-formulaire AUTO (OCR hybride) -->
+      <div id="bloc_cre_auto" style="margin-top:1rem;display:none;">
+        <h3>Création AUTO (OCR – mode hybride)</h3>
+        <p class="helper-text">
+          Ici, on simulera les données remontées par l’OCR (avant branchement à Odaia / Google Vision).<br />
+          Plus tard : flux réel photo → OCR → JSON → JARVIS.
+        </p>
+        <label for="cre_ocr_marque">Marque (proposée par OCR)</label>
+        <input id="cre_ocr_marque" placeholder="ex : BEKO" />
+
+        <label for="cre_ocr_modele">Modèle (proposé par OCR)</label>
+        <input id="cre_ocr_modele" placeholder="ex : WTE6511B0" />
+
+        <label for="cre_ocr_serie">N° de série (proposé par OCR)</label>
+        <input id="cre_ocr_serie" placeholder="ex : 123456789" />
+
+        <label for="cre_ocr_annee">Année (proposée par OCR)</label>
+        <input id="cre_ocr_annee" type="number" />
+
+        <button class="secondary" id="btn_valider_cre_auto">
+          ✅ Valider la création AUTO (mock)
+        </button>
+      </div>
+
+      <div id="cre_result" class="result" style="display:none;"></div>
+    </div>
+
+    <script>
+      const API_BASE = "http://127.0.0.1:8000";
+      let lastScan = null;
+
+      function showScanResult(text) {
+        const div = document.getElementById("scan_result");
+        div.style.display = "block";
+        div.textContent = text;
+      }
+
+      function hideCreationCard() {
+        document.getElementById("card_creation").style.display = "none";
+        document.getElementById("bloc_cre_auto").style.display = "none";
+        document.getElementById("bloc_cre_manuel").style.display = "none";
+        document.getElementById("cre_result").style.display = "none";
+      }
+
+      function renderProduitInfos(data) {
+        const card = document.getElementById("card_produit");
+        const div = document.getElementById("produit_infos");
+        card.style.display = "block";
+
+        hideCreationCard();
+
+        if (!data.existe) {
+          const peut = data.peut_creer_produit;
+          const lignes = [];
+          lignes.push("Produit INCONNU dans la base.");
+          lignes.push("");
+          lignes.push("ID traca : " + data.id_traca);
+          lignes.push(
+            "Structure d'origine : " +
+              (data.structure_origine.code || "?") +
+              " – " +
+              (data.structure_origine.nom || "inconnue")
+          );
+          lignes.push(
+            "Structure opérateur : " +
+              (data.structure_operateur.code || "?") +
+              " – " +
+              (data.structure_operateur.nom || "inconnue")
+          );
+          lignes.push("");
+
+          if (peut) {
+            lignes.push("✅ Création possible par cette structure.");
+            document.getElementById("card_creation").style.display = "block";
+          } else {
+            lignes.push("⛔ Création réservée à la structure d'origine.");
+          }
+
+          div.textContent = lignes.join("\n");
+          return;
+        }
+
+        const p = data.produit;
+        const droits = data.droits || {};
+        const lignes = [];
+        lignes.push("✅ PRODUIT TROUVÉ");
+        lignes.push("");
+        lignes.push("ID traca : " + data.id_traca);
+        lignes.push(
+          "Structure origine  : " +
+            (data.structure_origine.code || "?") +
+            " – " +
+            (data.structure_origine.nom || "inconnue")
+        );
+        lignes.push(
+          "Structure opérateur: " +
+            (data.structure_operateur.code || "?") +
+            " – " +
+            (data.structure_operateur.nom || "inconnue")
+        );
+        lignes.push("");
+        lignes.push(
+          "Flux / Famille / Sous-famille : " +
+            (p.code_flux || "-") +
+            " / " +
+            (p.code_famille || "-") +
+            " / " +
+            (p.code_sous_famille || "-")
+        );
+        lignes.push(
+          "Point de collecte : " +
+            (p.point_collecte_code || "-") +
+            " – " +
+            (p.point_collecte_libelle || "-")
+        );
+        lignes.push("Poids (kg)        : " + (p.poids_kg ?? "-"));
+        lignes.push("État actuel       : " + (p.etat || "-"));
+        lignes.push("");
+        lignes.push("Droits opérateur :");
+        lignes.push(
+          "- Modifier point de collecte : " +
+            (droits.peut_modifier_point_collecte ? "OUI" : "NON")
+        );
+        lignes.push(
+          "- Modifier flux / famille    : " +
+            (droits.peut_modifier_flux_famille ? "OUI" : "NON")
+        );
+        lignes.push(
+          "- Modifier ÉTAT              : " +
+            (droits.peut_modifier_etat ? "OUI" : "NON")
+        );
+        lignes.push(
+          "- Modifier OCR               : " +
+            (droits.peut_modifier_ocr ? "OUI" : "NON")
+        );
+        lignes.push(
+          "- Modifier ORIENTATION       : " +
+            (droits.peut_modifier_orientation ? "OUI" : "NON")
+        );
+
+        div.textContent = lignes.join("\n");
+      }
+
+      async function doScan() {
+        const id_traca = document.getElementById("scan_id_traca").value.trim();
+        const struct_op = document.getElementById("scan_struct_op").value.trim();
+
+        if (!id_traca) {
+          showScanResult("❌ Merci de saisir un ID traca (12 chiffres).");
+          document.getElementById("card_produit").style.display = "none";
+          hideCreationCard();
+          return;
+        }
+
+        if (id_traca.length < 4) {
+          showScanResult("❌ ID traca invalide (au moins 4 chiffres).");
+          document.getElementById("card_produit").style.display = "none";
+          hideCreationCard();
+          return;
+        }
+
+        showScanResult("Analyse en cours…");
+        document.getElementById("card_produit").style.display = "none";
+        hideCreationCard();
+
+        try {
+          const resp = await fetch(API_BASE + "/scan", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              id_traca: id_traca,
+              code_structure_operateur: struct_op,
+            }),
+          });
+          const data = await resp.json();
+
+          if (!resp.ok) {
+            showScanResult("Erreur API : " + (data.detail || JSON.stringify(data)));
+            document.getElementById("card_produit").style.display = "none";
+            hideCreationCard();
+            return;
+          }
+
+          lastScan = data;
+          showScanResult(
+            data.existe
+              ? "✅ Produit trouvé. Voir les détails ci-dessous."
+              : data.peut_creer_produit
+              ? "ℹ️ Produit inconnu, mais création possible par cette structure."
+              : "ℹ️ Produit inconnu. Création réservée à la structure d'origine."
+          );
+          renderProduitInfos(data);
+        } catch (e) {
+          showScanResult("Erreur réseau ou serveur : " + e);
+          document.getElementById("card_produit").style.display = "none";
+          hideCreationCard();
+        }
+      }
+
+      // --------- Création AUTO (mock OCR hybride) ----------
+      function ouvrirCreationAuto() {
+        const bloc = document.getElementById("bloc_cre_auto");
+        const blocManuel = document.getElementById("bloc_cre_manuel");
+        bloc.style.display = "block";
+        blocManuel.style.display = "none";
+        const div = document.getElementById("cre_result");
+        div.style.display = "none";
+        div.textContent = "";
+      }
+
+      function ouvrirCreationManuelle() {
+        const bloc = document.getElementById("bloc_cre_manuel");
+        const blocAuto = document.getElementById("bloc_cre_auto");
+        bloc.style.display = "block";
+        blocAuto.style.display = "none";
+        const div = document.getElementById("cre_result");
+        div.style.display = "none";
+        div.textContent = "";
+      }
+
+      function mockCreationAuto() {
+        const div = document.getElementById("cre_result");
+        div.style.display = "block";
+
+        if (!lastScan || lastScan.existe) {
+          div.textContent = "❌ Il faut d'abord scanner un ID inconnu mais créable.";
+          return;
+        }
+
+        const pcCode = document.getElementById("cre_point_code").value.trim();
+        const pcLib = document.getElementById("cre_point_lib").value.trim();
+        if (!pcCode || !pcLib) {
+          div.textContent = "❌ Merci de renseigner le point de collecte (code + libellé).";
+          return;
+        }
+
+        const marque =
+          document.getElementById("cre_ocr_marque").value.trim() || "(marque OCR simulée)";
+        const modele =
+          document.getElementById("cre_ocr_modele").value.trim() || "(modèle OCR simulé)";
+        const serie =
+          document.getElementById("cre_ocr_serie").value.trim() || "(série OCR simulée)";
+        const annee =
+          document.getElementById("cre_ocr_annee").value.trim() || "(année OCR simulée)";
+
+        const lignes = [];
+        lignes.push("✅ Création AUTO (mock) enregistrée côté front (sans appel API).");
+        lignes.push("");
+        lignes.push("ID traca           : " + lastScan.id_traca);
+        lignes.push("Point de collecte  : " + pcCode + " – " + pcLib);
+        lignes.push("Marque (OCR)       : " + marque);
+        lignes.push("Modèle (OCR)       : " + modele);
+        lignes.push("Série (OCR)        : " + serie);
+        lignes.push("Année (OCR)        : " + annee);
+        lignes.push("");
+        lignes.push(
+          "Étape suivante JARVIS : envoyer ces données vers l'API /collecte/creer + flux OCR."
+        );
+
+        div.textContent = lignes.join("\n");
+      }
+
+      function mockCreationManuelle() {
+        const div = document.getElementById("cre_result");
+        div.style.display = "block";
+
+        if (!lastScan || lastScan.existe) {
+          div.textContent = "❌ Il faut d'abord scanner un ID inconnu mais créable.";
+          return;
+        }
+
+        const pcCode = document.getElementById("cre_point_code").value.trim();
+        const pcLib = document.getElementById("cre_point_lib").value.trim();
+        if (!pcCode || !pcLib) {
+          div.textContent = "❌ Merci de renseigner le point de collecte (code + libellé).";
+          return;
+        }
+
+        const famille = document.getElementById("cre_famille").value.trim() || "(non renseignée)";
+        const sousFamille =
+          document.getElementById("cre_sous_famille").value.trim() || "(non renseignée)";
+        const modele = document.getElementById("cre_modele").value.trim() || "(non renseigné)";
+        const poids = document.getElementById("cre_poids").value.trim() || "(non renseigné)";
+
+        const lignes = [];
+        lignes.push("✅ Création MANUELLE (mock) enregistrée côté front (sans appel API).");
+        lignes.push("");
+        lignes.push("ID traca           : " + lastScan.id_traca);
+        lignes.push("Point de collecte  : " + pcCode + " – " + pcLib);
+        lignes.push("Famille            : " + famille);
+        lignes.push("Sous-famille       : " + sousFamille);
+        lignes.push("Modèle             : " + modele);
+        lignes.push("Poids (kg)         : " + poids);
+        lignes.push("");
+        lignes.push(
+          "Étape suivante JARVIS : envoyer ces données vers l'API /collecte/creer (mode manuel)."
+        );
+
+        div.textContent = lignes.join("\n");
+      }
+
+      // Bind des événements
+      document.getElementById("btn_scan").addEventListener("click", doScan);
+      document.getElementById("btn_cre_auto").addEventListener("click", ouvrirCreationAuto);
+      document.getElementById("btn_cre_manuel").addEventListener("click", ouvrirCreationManuelle);
+      document
+        .getElementById("btn_valider_cre_auto")
+        .addEventListener("click", mockCreationAuto);
+      document
+        .getElementById("btn_valider_cre_manuel")
+        .addEventListener("click", mockCreationManuelle);
+    </script>
+  </body>
+</html>
