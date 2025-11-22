@@ -13,7 +13,7 @@
 
     <style>
       :root {
-        /* Palette officielle Envie */
+        /* Palette Envie */
         --envie-vert-fonce: #00463c;
         --envie-vert-moyen: #237031;
         --envie-vert-clair: #c7e1bc;
@@ -33,7 +33,7 @@
       body {
         font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
         margin: 0;
-        padding: 1.5rem;
+        padding: 0.8rem;
         background: var(--bg-page);
         color: var(--text-main);
       }
@@ -42,14 +42,14 @@
       .topbar {
         background: var(--envie-vert-fonce);
         color: #ffffff;
-        padding: 0.9rem 1.1rem;
-        border-radius: 16px;
+        padding: 0.6rem 0.8rem;
+        border-radius: 14px;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        gap: 0.75rem;
+        gap: 0.5rem;
         box-shadow: 0 3px 12px rgba(0, 0, 0, 0.18);
-        margin-bottom: 1.5rem;
+        margin-bottom: 0.8rem;
       }
 
       .topbar-main {
@@ -59,73 +59,70 @@
 
       .topbar-title {
         font-weight: 650;
-        font-size: 1.1rem;
+        font-size: 1rem;
         letter-spacing: 0.02em;
       }
 
       .topbar-subtitle {
-        font-size: 0.8rem;
+        font-size: 0.75rem;
         opacity: 0.9;
       }
 
       .topbar-tag {
-        font-size: 0.7rem;
+        font-size: 0.65rem;
         text-transform: uppercase;
         border-radius: 999px;
-        padding: 0.2rem 0.6rem;
-        border: 1px solid rgba(255, 255, 255, 0.5);
-        opacity: 0.9;
+        padding: 0.15rem 0.5rem;
+        border: 1px solid rgba(255, 255, 255, 0.4);
       }
 
       .topbar-badge {
         background: var(--envie-orange);
         color: #ffffff;
-        font-size: 0.75rem;
+        font-size: 0.7rem;
         font-weight: 600;
         border-radius: 999px;
-        padding: 0.3rem 0.75rem;
+        padding: 0.25rem 0.6rem;
         white-space: nowrap;
       }
 
       h1 {
-        margin: 0.75rem 0 0.25rem;
-        font-size: 1.15rem;
+        margin: 0.4rem 0 0.2rem;
+        font-size: 1rem;
         color: var(--envie-vert-fonce);
       }
 
       p.lead {
-        font-size: 0.9rem;
-        max-width: 800px;
-        margin: 0 0 1rem;
+        font-size: 0.8rem;
+        margin: 0 0 0.7rem;
         color: var(--text-muted);
       }
 
       .card {
         background: var(--bg-card);
-        border-radius: 14px;
-        padding: 1rem 1.25rem;
-        margin-bottom: 1.25rem;
+        border-radius: 12px;
+        padding: 0.8rem;
+        margin-bottom: 0.8rem;
         box-shadow: 0 2px 7px rgba(0, 0, 0, 0.06);
         border: 1px solid rgba(0, 0, 0, 0.03);
       }
 
       h2 {
-        font-size: 1rem;
-        margin-top: 0;
-        margin-bottom: 0.4rem;
+        font-size: 0.95rem;
+        margin: 0 0 0.4rem;
         color: var(--envie-vert-fonce);
       }
 
       h3 {
-        font-size: 0.95rem;
-        margin-bottom: 0.4rem;
+        font-size: 0.9rem;
+        margin-bottom: 0.3rem;
         color: var(--envie-vert-moyen);
       }
 
       label {
         display: block;
-        font-size: 0.85rem;
-        margin-top: 0.6rem;
+        font-size: 0.8rem;
+        margin-top: 0.4rem;
         color: var(--text-main);
       }
 
@@ -133,12 +130,11 @@
       select,
       textarea {
         width: 100%;
-        padding: 0.45rem 0.55rem;
+        padding: 0.4rem 0.5rem;
         margin-top: 0.2rem;
         border-radius: 8px;
         border: 1px solid var(--border-soft);
-        font-size: 0.9rem;
-        box-sizing: border-box;
+        font-size: 0.85rem;
         background: #ffffff;
       }
 
@@ -150,14 +146,9 @@
         border-color: var(--envie-vert-moyen);
       }
 
-      textarea {
-        resize: vertical;
-        min-height: 3rem;
-      }
-
       button {
-        margin-top: 0.8rem;
-        padding: 0.55rem 1.1rem;
+        margin-top: 0.4rem;
+        padding: 0.5rem 0.8rem;
         border-radius: 999px;
         border: none;
         font-size: 0.9rem;
@@ -177,47 +168,33 @@
         border: 1px solid var(--envie-vert-fonce);
       }
 
-      button.secondary:hover {
-        background: var(--envie-vert-clair);
-      }
-
-      button.danger {
-        background: #e53e3e;
-      }
-
       button:disabled {
         opacity: 0.6;
         cursor: not-allowed;
       }
 
+      .btn-block {
+        width: 100%;
+        justify-content: center;
+      }
+
       .row {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 0.75rem;
+        gap: 0.6rem;
       }
 
-      .row-photo {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-        margin-top: 0.6rem;
-        align-items: center;
-      }
-
-      .row-photo button {
-        margin-top: 0;
-      }
-
-      .row-photo .stack {
+      .row-vertical {
         display: flex;
         flex-direction: column;
         gap: 0.35rem;
+        margin-top: 0.4rem;
       }
 
       .result {
-        margin-top: 0.7rem;
-        padding: 0.6rem 0.7rem;
-        font-size: 0.85rem;
+        margin-top: 0.5rem;
+        padding: 0.5rem 0.6rem;
+        font-size: 0.8rem;
         background: #f8fafc;
         border-radius: 8px;
         border: 1px solid #e2e8f0;
@@ -225,42 +202,15 @@
         color: #1f2933;
       }
 
-      .pill {
-        display: inline-block;
-        padding: 0.15rem 0.5rem;
-        border-radius: 999px;
-        font-size: 0.75rem;
-        margin-right: 0.4rem;
-        margin-top: 0.2rem;
-        background: #e2f4ec;
-        color: var(--envie-vert-fonce);
-        border: 1px solid rgba(0, 0, 0, 0.05);
-      }
-
-      .pill.red {
-        background: #fde2e2;
-        color: #8b1f1f;
-      }
-
-      .pill.gray {
-        background: #e2e8f0;
-        color: #334155;
-      }
-
-      .pill.orange {
-        background: #ffe7d5;
-        color: var(--envie-orange);
-      }
-
       .helper-text {
-        font-size: 0.8rem;
+        font-size: 0.75rem;
         color: var(--text-muted);
-        margin-top: 0.25rem;
+        margin-top: 0.2rem;
       }
 
       .scan-live-container {
-        margin-top: 0.6rem;
-        padding: 0.5rem;
+        margin-top: 0.4rem;
+        padding: 0.4rem;
         border-radius: 10px;
         background: #f1f5f9;
         border: 1px dashed #94a3b8;
@@ -268,16 +218,28 @@
 
       #scan_live_view {
         width: 100%;
-        max-width: 360px;
+        max-width: 320px;
         margin: 0 auto;
       }
 
-      /* Responsive mobile (collecteur) */
-      @media (max-width: 700px) {
-        body {
-          padding: 1rem 0.8rem;
-        }
+      .pill {
+        display: inline-block;
+        padding: 0.15rem 0.45rem;
+        border-radius: 999px;
+        font-size: 0.7rem;
+        margin-right: 0.3rem;
+        margin-top: 0.2rem;
+        background: #e2f4ec;
+        color: var(--envie-vert-fonce);
+      }
 
+      .pill.gray {
+        background: #e2e8f0;
+        color: #334155;
+      }
+
+      /* Mobile first */
+      @media (max-width: 700px) {
         .row {
           grid-template-columns: 1fr;
         }
@@ -287,38 +249,17 @@
           align-items: flex-start;
         }
 
-        .topbar-badge {
-          align-self: flex-start;
-        }
-
-        h1 {
-          font-size: 1.1rem;
-        }
-
         button {
-          width: 100%;
-        }
-
-        .row-photo {
-          flex-direction: column;
-          align-items: stretch;
-        }
-
-        .row-photo button {
           width: 100%;
         }
       }
 
-      /* Confort back office (écran large) */
+      /* Confort écran large */
       @media (min-width: 1000px) {
         body {
           max-width: 1100px;
           margin: 0 auto;
-          padding: 2rem 0;
-        }
-
-        .topbar {
-          border-radius: 20px;
+          padding: 1rem 0;
         }
       }
     </style>
@@ -328,9 +269,7 @@
     <header class="topbar">
       <div class="topbar-main">
         <div class="topbar-title">JARVIS · Envie</div>
-        <div class="topbar-subtitle">
-          Interface de tri & traçabilité – compatible collecte mobile et back office
-        </div>
+        <div class="topbar-subtitle">Tri & traçabilité – usage terrain simplifié</div>
       </div>
       <div>
         <div class="topbar-tag">Prototype v1</div>
@@ -338,29 +277,45 @@
       </div>
     </header>
 
-    <h1>Traca Envie – Interface Scan & Création</h1>
+    <h1>Collecte produit – Page 1</h1>
     <p class="lead">
-      1️⃣ Entrée produit par <strong>ID Traca</strong> (scan code-barres) ou par
-      <strong>DPP (QR app)</strong>.<br />
-      2️⃣ Le système cherche en local (base Traca) et indique si la structure peut créer le produit.<br />
-      3️⃣ En cas de création, JARVIS ouvre la <strong>partie App</strong> pour compléter AUTO (DPP/OCR) ou
-      MANUEL.
+      1. Choisir un bouton<br />
+      2. Scanner / prendre la photo<br />
+      3. Laisser JARVIS remplir la fiche
     </p>
 
-    <!-- Carte 1 : SCAN -->
+    <!-- Carte 1 : actions principales (AU DESSUS DE LA LIGNE DE FLOTTEMENT) -->
     <div class="card">
-      <h2>1. Entrée produit – Scan / saisie ID Traca</h2>
-      <div class="row">
+      <h2>1. Choisir l’action</h2>
+
+      <div class="row-vertical">
+        <button type="button" id="btn_live_scan_traca" class="btn-block">
+          📦 Scanner TRACA (code-barres)
+        </button>
+        <span class="helper-text">Scanner le code-barres Traca collé sur le produit.</span>
+
+        <button type="button" id="btn_live_scan_dpp" class="btn-block secondary">
+          🔗 Scanner DPP (QR app)
+        </button>
+        <span class="helper-text">Scanner le QR de l’appareil (passeport numérique).</span>
+
+        <button type="button" id="btn_photo" class="btn-block secondary">
+          📸 Photo (plaque / QR / code-barres)
+        </button>
+        <span class="helper-text">
+          Prendre une photo si le scan ne marche pas ou pour un traitement OCR.
+        </span>
+      </div>
+
+      <!-- ID Traca + structure : juste en dessous pour rester visible -->
+      <div class="row" style="margin-top:0.6rem;">
         <div>
           <label for="scan_id_traca">ID Traca (12 chiffres)</label>
           <input id="scan_id_traca" placeholder="ex : 170100000001" />
-          <div class="helper-text">
-            Clé obligatoire pour la traçabilité. Le scan DPP prépare la fiche, mais ne remplace pas l’ID
-            Traca.
-          </div>
+          <div class="helper-text">Peut être rempli par le scan TRACA ou saisi à la main.</div>
         </div>
         <div>
-          <label for="scan_struct_op">Structure opérateur</label>
+          <label for="scan_struct_op">Structure</label>
           <select id="scan_struct_op">
             <option value="1701">1701 – Envie Drôme Ardèche</option>
             <option value="1001">1001 – Envie Tourcoing</option>
@@ -368,60 +323,10 @@
         </div>
       </div>
 
-      <!-- 2 boutons d'entrée produit -->
-      <label style="margin-top:0.9rem;">Scan live – choix d’entrée produit</label>
-      <div class="row-photo">
-        <div class="stack">
-          <button type="button" id="btn_live_scan_traca">
-            🎥 Scan TRACA (code-barres)
-          </button>
-          <span class="helper-text">
-            L’opérateur cadre le <strong>code-barres Traca</strong> : JARVIS remplit le champ ID Traca en
-            live.
-          </span>
-        </div>
-        <div class="stack">
-          <button type="button" id="btn_live_scan_dpp" class="secondary">
-            🎥 Scan DPP (QR app)
-          </button>
-          <span class="helper-text">
-            L’opérateur cadre le <strong>QR de l’app / DPP</strong> : JARVIS ouvre la
-            <strong>partie App</strong> (Création AUTO) et pré-remplit flux (GEMF…), famille, sous-famille,
-            poids.
-          </span>
-        </div>
-      </div>
+      <button id="btn_scan" class="btn-block" style="margin-top:0.6rem;">
+        🔍 Vérifier l’ID Traca dans la base
+      </button>
 
-      <div
-        id="scan_live_container"
-        class="scan-live-container"
-        style="display:none;"
-      >
-        <div id="scan_live_view"></div>
-        <div class="helper-text" id="scan_live_mode_label">
-          Cadre le code dans le carré.
-        </div>
-        <button
-          type="button"
-          id="btn_live_scan_stop"
-          class="secondary"
-          style="margin-top:0.6rem;"
-        >
-          ⏹️ Stop scan
-        </button>
-      </div>
-
-      <!-- Photo simple pour OCR / DPP différé (option) -->
-      <label style="margin-top:0.9rem;">ou Photo (mode OCR / DPP différé)</label>
-      <div class="row-photo">
-        <button type="button" id="btn_photo" class="secondary">
-          📸 Prendre une photo (plaque signalétique / QR / code-barres)
-        </button>
-        <span class="helper-text">
-          Photo pour un traitement OCR / DPP ultérieur (Google Vision, Arianee…). L’ID Traca reste à
-          scanner en live ou à saisir.
-        </span>
-      </div>
       <input
         type="file"
         id="photo_input"
@@ -430,63 +335,86 @@
         style="display:none;"
       />
 
-      <button id="btn_scan">🔍 Analyser le numéro (API Traca locale)</button>
+      <!-- Zone de scan live -->
+      <div
+        id="scan_live_container"
+        class="scan-live-container"
+        style="display:none;"
+      >
+        <div id="scan_live_view"></div>
+        <div class="helper-text" id="scan_live_mode_label">Cadrez le code dans le carré.</div>
+        <button
+          type="button"
+          id="btn_live_scan_stop"
+          class="secondary btn-block"
+          style="margin-top:0.4rem;"
+        >
+          ⏹️ Arrêter le scan
+        </button>
+      </div>
+
+      <!-- Messages simples -->
       <div id="scan_result" class="result" style="display:none;"></div>
     </div>
 
-    <!-- Carte 2 : Résumé produit -->
+    <!-- Carte 2 : Fiche collecte produit depuis DPP / OCR -->
+    <div class="card" id="card_fiche_dpp" style="display:none;">
+      <h2>2. Fiche produit – DPP / QR</h2>
+      <p class="helper-text">
+        JARVIS lit le contenu du DPP (ou de la photo) et propose une fiche simple. Le texte brut est
+        affiché en bas pour contrôle.
+      </p>
+      <div id="fiche_dpp" class="result"></div>
+    </div>
+
+    <!-- Carte 3 : Résultat base locale / droits -->
     <div class="card" id="card_produit" style="display:none;">
-      <h2>2. Résultat (existence + droits)</h2>
+      <h2>3. Résultat base Traca</h2>
       <div id="produit_infos" class="result"></div>
     </div>
 
-    <!-- Carte 3 : Création produit (partie App) -->
+    <!-- Carte 4 : Création produit (partie App) -->
     <div class="card" id="card_creation" style="display:none;">
-      <h2>3. Création du produit – Partie App JARVIS</h2>
+      <h2>4. Création / Complétion du produit</h2>
       <p class="helper-text">
-        L’ID traca n’existe pas encore en base et ta structure est autorisée à le créer.<br />
-        Ou bien un DPP a été scanné : JARVIS pré-remplit la fiche, tu complètes et valides.
+        Si le produit n’existe pas dans la base, ou après un DPP, JARVIS te propose de compléter la fiche.<br />
+        Mode simple : choix AUTO (données proposées) ou MANUEL (tu remplis).
       </p>
 
       <div class="row">
         <div>
-          <label for="cre_point_code">Point de collecte (code interne, ex : PC01)</label>
-          <input id="cre_point_code" />
+          <label for="cre_point_code">Point de collecte (code)</label>
+          <input id="cre_point_code" placeholder="ex : PC01" />
         </div>
         <div>
-          <label for="cre_point_lib">Libellé point de collecte</label>
+          <label for="cre_point_lib">Point de collecte (nom)</label>
           <input id="cre_point_lib" placeholder="ex : Boulanger, Déchetterie X…" />
         </div>
       </div>
 
-      <h3 style="margin-top:1rem;">Mode de création</h3>
-      <p style="font-size:0.8rem;">
-        <span class="pill orange">AUTO (DPP / OCR)</span>
-        Utilise le DPP ou l’OCR pour proposer flux (GEMF…), famille, sous-famille, modèle, poids.<br />
+      <p class="helper-text" style="margin-top:0.5rem;">
+        <span class="pill">AUTO (DPP / OCR)</span>
+        JARVIS remplit les champs. Tu vérifies.<br />
         <span class="pill gray">MANUEL</span>
-        Tu saisis toi-même flux, famille, sous-famille, modèle, poids.
+        Tu remplis toi-même.
       </p>
 
       <div class="row">
-        <div>
-          <button class="secondary" id="btn_cre_auto">⚙️ Création automatique (DPP / OCR)</button>
-        </div>
-        <div>
-          <button class="secondary" id="btn_cre_manuel">✍️ Création manuelle</button>
-        </div>
+        <button class="secondary btn-block" id="btn_cre_auto">⚙️ Mode AUTO</button>
+        <button class="secondary btn-block" id="btn_cre_manuel">✍️ Mode MANUEL</button>
       </div>
 
       <!-- Sous-formulaire MANUEL -->
-      <div id="bloc_cre_manuel" style="margin-top:1rem;display:none;">
-        <h3>Création MANUELLE</h3>
+      <div id="bloc_cre_manuel" style="margin-top:0.6rem;display:none;">
+        <h3>Mode MANUEL</h3>
 
         <label for="cre_flux">Flux (ex : GEMF)</label>
         <input id="cre_flux" placeholder="ex : GEMF" />
 
-        <label for="cre_flux_sous">Sous-famille flux (ex : GEMHF)</label>
+        <label for="cre_flux_sous">Sous-flux (ex : GEMHF)</label>
         <input id="cre_flux_sous" placeholder="ex : GEMHF" />
 
-        <label for="cre_famille">Famille Envie</label>
+        <label for="cre_famille">Famille</label>
         <select id="cre_famille">
           <option value="">-- choisir --</option>
           <option value="Froid">Froid</option>
@@ -497,60 +425,56 @@
           <option value="Gris">Gris</option>
         </select>
 
-        <label for="cre_sous_famille">Sous-famille Envie</label>
+        <label for="cre_sous_famille">Sous-famille</label>
         <input id="cre_sous_famille" placeholder="ex : COMBINÉ RÉFRIGÉRATEUR / CONGÉLATEUR" />
 
-        <label for="cre_modele">Modèle (manuel ou suggéré plus tard via Odaia)</label>
+        <label for="cre_modele">Modèle</label>
         <input id="cre_modele" placeholder="ex : WTE6511B0" />
 
         <label for="cre_poids">Poids (kg)</label>
         <input id="cre_poids" type="number" step="0.1" />
 
-        <button class="secondary" id="btn_valider_cre_manuel">
-          ✅ Valider la création manuelle (mock)
+        <button class="secondary btn-block" id="btn_valider_cre_manuel">
+          ✅ Valider (mode MANUEL – démo)
         </button>
       </div>
 
       <!-- Sous-formulaire AUTO (DPP / OCR – mock) -->
-      <div id="bloc_cre_auto" style="margin-top:1rem;display:none;">
-        <h3>Création AUTO (DPP / OCR – mode hybride)</h3>
+      <div id="bloc_cre_auto" style="margin-top:0.6rem;display:none;">
+        <h3>Mode AUTO (DPP / OCR)</h3>
         <p class="helper-text">
-          Données issues du DPP (QR app) ou d’un flux OCR (plaque signalétique).<br />
-          Ici on simule les valeurs, le branchement live viendra ensuite.
+          Les champs ci-dessous sont remplis à partir du DPP / de la photo. Tu peux corriger si besoin.
         </p>
 
-        <label for="cre_ocr_flux">Flux (ex : GEMF)</label>
-        <input id="cre_ocr_flux" placeholder="ex : GEMF" />
+        <label for="cre_ocr_flux">Flux</label>
+        <input id="cre_ocr_flux" />
 
-        <label for="cre_ocr_flux_sous">Sous-famille flux (ex : GEMHF)</label>
-        <input id="cre_ocr_flux_sous" placeholder="ex : GEMHF" />
+        <label for="cre_ocr_flux_sous">Sous-flux</label>
+        <input id="cre_ocr_flux_sous" />
 
-        <label for="cre_ocr_famille">Famille Envie</label>
-        <input id="cre_ocr_famille" placeholder="ex : Réfrigérateur / Congélateur" />
+        <label for="cre_ocr_famille">Famille</label>
+        <input id="cre_ocr_famille" />
 
-        <label for="cre_ocr_sous_famille">Sous-famille Envie</label>
-        <input
-          id="cre_ocr_sous_famille"
-          placeholder="ex : COMBINÉ RÉFRIGÉRATEUR / CONGÉLATEUR"
-        />
+        <label for="cre_ocr_sous_famille">Sous-famille</label>
+        <input id="cre_ocr_sous_famille" />
 
-        <label for="cre_ocr_marque">Marque (proposée AUTO)</label>
-        <input id="cre_ocr_marque" placeholder="ex : BEKO" />
+        <label for="cre_ocr_marque">Marque</label>
+        <input id="cre_ocr_marque" />
 
-        <label for="cre_ocr_modele">Modèle (proposé AUTO)</label>
-        <input id="cre_ocr_modele" placeholder="ex : WTE6511B0" />
+        <label for="cre_ocr_modele">Modèle</label>
+        <input id="cre_ocr_modele" />
 
-        <label for="cre_ocr_serie">N° de série (proposé AUTO)</label>
-        <input id="cre_ocr_serie" placeholder="ex : 123456789" />
+        <label for="cre_ocr_serie">N° de série</label>
+        <input id="cre_ocr_serie" />
 
-        <label for="cre_ocr_annee">Année (proposée AUTO)</label>
+        <label for="cre_ocr_annee">Année</label>
         <input id="cre_ocr_annee" type="number" />
 
-        <label for="cre_ocr_poids">Poids (kg – proposé AUTO)</label>
+        <label for="cre_ocr_poids">Poids (kg)</label>
         <input id="cre_ocr_poids" type="number" step="0.1" />
 
-        <button class="secondary" id="btn_valider_cre_auto">
-          ✅ Valider la création AUTO (mock)
+        <button class="secondary btn-block" id="btn_valider_cre_auto">
+          ✅ Valider (mode AUTO – démo)
         </button>
       </div>
 
@@ -565,6 +489,7 @@
       let liveScanActive = false;
       let liveScanMode = null; // "TRACA" ou "DPP"
 
+      // --------- Helpers affichage ----------
       function showScanResult(text) {
         const div = document.getElementById("scan_result");
         div.style.display = "block";
@@ -578,6 +503,112 @@
         document.getElementById("cre_result").style.display = "none";
       }
 
+      function hideFicheDPP() {
+        const card = document.getElementById("card_fiche_dpp");
+        const div = document.getElementById("fiche_dpp");
+        card.style.display = "none";
+        div.textContent = "";
+      }
+
+      function showFicheDPP(info) {
+        const card = document.getElementById("card_fiche_dpp");
+        const div = document.getElementById("fiche_dpp");
+        card.style.display = "block";
+
+        const lignes = [];
+        lignes.push("Fiche produit proposée à partir du DPP / QR.");
+        lignes.push("");
+        lignes.push("Flux        : " + (info.flux || "-"));
+        lignes.push("Sous-flux   : " + (info.flux_sous || "-"));
+        lignes.push("Famille     : " + (info.famille || "-"));
+        lignes.push("Sous-famille: " + (info.sous_famille || "-"));
+        lignes.push(
+          "Marque / Modèle : " +
+            (info.marque || "-") +
+            " / " +
+            (info.modele || "-")
+        );
+        lignes.push("N° série    : " + (info.serie || "-"));
+        lignes.push("Année       : " + (info.annee || "-"));
+        lignes.push("Poids (kg)  : " + (info.poids_kg ?? "-"));
+        lignes.push("");
+        lignes.push("Texte brut DPP / QR :");
+        lignes.push("----------------------------------------");
+        lignes.push(info.brut || "-");
+
+        div.textContent = lignes.join("\n");
+        card.scrollIntoView({ behavior: "smooth" });
+      }
+
+      // --------- Interprétation du contenu DPP ----------
+      function parseDppFromRaw(raw) {
+        const info = {
+          flux: "",
+          flux_sous: "",
+          famille: "",
+          sous_famille: "",
+          marque: "",
+          modele: "",
+          serie: "",
+          annee: "",
+          poids_kg: "",
+          brut: raw,
+        };
+
+        if (!raw) return info;
+        const trimmed = raw.trim();
+
+        // 1) Tentative JSON
+        if (trimmed.startsWith("{") || trimmed.startsWith("[")) {
+          try {
+            const obj = JSON.parse(trimmed);
+            const get = (...keys) => {
+              for (const k of keys) {
+                if (obj[k] != null) return String(obj[k]);
+              }
+              return "";
+            };
+            info.flux = get("flux", "flow", "flux_code");
+            info.flux_sous = get("flux_sous", "subflow", "sub_flux", "flux_sub");
+            info.famille = get("famille", "family", "category");
+            info.sous_famille = get("sous_famille", "subcategory", "product_type");
+            info.marque = get("marque", "brand", "manufacturer");
+            info.modele = get("modele", "model", "product_model");
+            info.serie = get("serie", "serial", "serial_number", "sn");
+            info.annee = get("annee", "year", "manufacture_year");
+            info.poids_kg = get("poids", "weight", "weight_kg");
+            return info;
+          } catch (e) {}
+        }
+
+        // 2) Tentative URL avec paramètres
+        try {
+          const url = new URL(trimmed);
+          const p = url.searchParams;
+          const get = (...keys) => {
+            for (const k of keys) {
+              const v = p.get(k);
+              if (v) return v;
+            }
+            return "";
+          };
+          info.flux = get("flux", "flow", "flux_code");
+          info.flux_sous = get("flux_sous", "subflow", "sub_flux", "flux_sub");
+          info.famille = get("famille", "family", "category");
+          info.sous_famille = get("sous_famille", "subcategory", "product_type");
+          info.marque = get("marque", "brand");
+          info.modele = get("modele", "model");
+          info.serie = get("serie", "serial", "sn");
+          info.annee = get("annee", "year");
+          info.poids_kg = get("poids", "weight", "weight_kg");
+          return info;
+        } catch (e) {}
+
+        // 3) Sinon, tout reste vide, seul le brut est affiché
+        return info;
+      }
+
+      // --------- Base locale / droits ----------
       function renderProduitInfos(data) {
         const card = document.getElementById("card_produit");
         const div = document.getElementById("produit_infos");
@@ -592,7 +623,7 @@
           lignes.push("");
           lignes.push("ID traca : " + (data.id_traca || "(non fourni)"));
           lignes.push(
-            "Structure d'origine : " +
+            "Structure origine : " +
               (data.structure_origine?.code || "?") +
               " – " +
               (data.structure_origine?.nom || "inconnue")
@@ -606,7 +637,7 @@
           lignes.push("");
 
           if (peut) {
-            lignes.push("✅ Création possible par cette structure (mode JARVIS).");
+            lignes.push("✅ Création possible par cette structure.");
             document.getElementById("card_creation").style.display = "block";
           } else {
             lignes.push("⛔ Création réservée à la structure d'origine.");
@@ -619,7 +650,7 @@
         const p = data.produit;
         const droits = data.droits || {};
         const lignes = [];
-        lignes.push("✅ PRODUIT TROUVÉ");
+        lignes.push("✅ PRODUIT TROUVÉ dans la base.");
         lignes.push("");
         lignes.push("ID traca : " + data.id_traca);
         lignes.push(
@@ -654,24 +685,16 @@
         lignes.push("");
         lignes.push("Droits opérateur :");
         lignes.push(
-          "- Modifier point de collecte : " +
+          "- Modifier point collecte : " +
             (droits.peut_modifier_point_collecte ? "OUI" : "NON")
         );
         lignes.push(
-          "- Modifier flux / famille    : " +
+          "- Modifier flux / famille : " +
             (droits.peut_modifier_flux_famille ? "OUI" : "NON")
         );
         lignes.push(
-          "- Modifier ÉTAT              : " +
+          "- Modifier état          : " +
             (droits.peut_modifier_etat ? "OUI" : "NON")
-        );
-        lignes.push(
-          "- Modifier OCR               : " +
-            (droits.peut_modifier_ocr ? "OUI" : "NON")
-        );
-        lignes.push(
-          "- Modifier ORIENTATION       : " +
-            (droits.peut_modifier_orientation ? "OUI" : "NON")
         );
 
         div.textContent = lignes.join("\n");
@@ -682,22 +705,20 @@
         const struct_op = document.getElementById("scan_struct_op").value.trim();
 
         if (!id_traca) {
-          showScanResult(
-            "❌ Merci de scanner un code-barres TRACA (bouton Scan TRACA) ou de saisir un ID traca (12 chiffres)."
-          );
+          showScanResult("❌ Scanner ou saisir l’ID Traca (12 chiffres).");
           document.getElementById("card_produit").style.display = "none";
           hideCreationCard();
           return;
         }
 
         if (id_traca.length < 4) {
-          showScanResult("❌ ID traca invalide (au moins 4 chiffres).");
+          showScanResult("❌ ID Traca trop court.");
           document.getElementById("card_produit").style.display = "none";
           hideCreationCard();
           return;
         }
 
-        showScanResult("Analyse locale en cours…");
+        showScanResult("⏳ Recherche dans la base Traca…");
         document.getElementById("card_produit").style.display = "none";
         hideCreationCard();
 
@@ -722,8 +743,7 @@
               peut_creer_produit: true,
             };
             showScanResult(
-              "⚠️ Erreur API /scan (ex : numéro non trouvé ou format).\n" +
-                "JARVIS bascule en mode « produit inconnu mais créable »."
+              "⚠️ ID Traca non trouvé ou format incorrect.\nJARVIS propose la création du produit."
             );
             renderProduitInfos(lastScan);
             return;
@@ -732,9 +752,9 @@
           lastScan = data;
           showScanResult(
             data.existe
-              ? "✅ Produit trouvé dans la base locale. Voir les détails ci-dessous."
+              ? "✅ Produit trouvé dans la base."
               : data.peut_creer_produit
-              ? "ℹ️ Produit inconnu localement, mais création possible par cette structure."
+              ? "ℹ️ Produit inconnu, création possible par la structure."
               : "ℹ️ Produit inconnu. Création réservée à la structure d'origine."
           );
           renderProduitInfos(data);
@@ -748,9 +768,7 @@
             peut_creer_produit: true,
           };
           showScanResult(
-            "⚠️ Erreur réseau ou serveur : " +
-              e +
-              "\nJARVIS bascule en mode « produit inconnu mais créable »."
+            "⚠️ Erreur de connexion.\nJARVIS propose la création du produit (mode dégradé)."
           );
           renderProduitInfos(lastScan);
         }
@@ -769,15 +787,15 @@
           if (tracaRegex.test(trimmed)) {
             document.getElementById("scan_id_traca").value = trimmed;
             showScanResult(
-              "✅ Code-barres Traca détecté : " +
+              "✅ ID Traca détecté : " +
                 trimmed +
-                "\nClique sur « Analyser le numéro » pour lancer la recherche locale."
+                "\nCliquer sur « Vérifier l’ID Traca » pour interroger la base."
             );
           } else {
             showScanResult(
               "⚠️ Code lu :\n" +
                 trimmed +
-                "\nCe format ne ressemble pas à un ID Traca (12 chiffres). Merci de recadrer le code-barres Traca."
+                "\nCe code ne ressemble pas à un ID Traca (12 chiffres)."
             );
           }
           return;
@@ -787,36 +805,28 @@
           // Entrée produit par DPP : on ne touche PAS à l’ID Traca
           document.getElementById("scan_id_traca").value = "";
 
-          // On ouvre la partie App (carte 3) et le bloc AUTO
+          // Interprétation du DPP
+          const dppInfo = parseDppFromRaw(trimmed);
+          showFicheDPP(dppInfo);
+
+          // Ouverture de la partie création
           document.getElementById("card_creation").style.display = "block";
           ouvrirCreationAuto();
 
-          // 👉 Ici on simule les infos DPP pour te montrer le résultat :
-          document.getElementById("cre_ocr_flux").value = "GEMF";
-          document.getElementById("cre_ocr_flux_sous").value = "GEMHF";
-          document.getElementById("cre_ocr_famille").value = "Réfrigérateur / Congélateur";
-          document.getElementById("cre_ocr_sous_famille").value =
-            "COMBINÉ RÉFRIGÉRATEUR / CONGÉLATEUR";
-          document.getElementById("cre_ocr_marque").value = "SAMSUNG";
-          document.getElementById("cre_ocr_modele").value = "RB31FEJNDSA/EF";
-          document.getElementById("cre_ocr_serie").value = "SN-DPP-123456789";
-          document.getElementById("cre_ocr_annee").value = "2018";
-          document.getElementById("cre_ocr_poids").value = "65.0";
+          document.getElementById("cre_ocr_flux").value = dppInfo.flux;
+          document.getElementById("cre_ocr_flux_sous").value = dppInfo.flux_sous;
+          document.getElementById("cre_ocr_famille").value = dppInfo.famille;
+          document.getElementById("cre_ocr_sous_famille").value = dppInfo.sous_famille;
+          document.getElementById("cre_ocr_marque").value = dppInfo.marque;
+          document.getElementById("cre_ocr_modele").value = dppInfo.modele;
+          document.getElementById("cre_ocr_serie").value = dppInfo.serie;
+          document.getElementById("cre_ocr_annee").value = dppInfo.annee;
+          document.getElementById("cre_ocr_poids").value = dppInfo.poids_kg;
 
           document.getElementById("card_creation").scrollIntoView({ behavior: "smooth" });
 
           showScanResult(
-            "✅ QR DPP détecté.\n" +
-              "Contenu brut :\n" +
-              trimmed +
-              "\n\n" +
-              "JARVIS a pré-rempli :\n" +
-              "- Flux : GEMF\n" +
-              "- Sous-famille flux : GEMHF\n" +
-              "- Famille / sous-famille Envie\n" +
-              "- Marque / modèle\n" +
-              "- Poids (kg)\n\n" +
-              "⚠️ L’ID Traca doit encore être scanné (Scan TRACA) ou saisi, puis analysé."
+            "✅ QR DPP détecté.\nLa fiche produit a été remplie à partir du DPP.\nL’ID Traca reste à scanner ou saisir."
           );
         }
       }
@@ -828,18 +838,16 @@
         container.style.display = "block";
 
         if (mode === "TRACA") {
-          label.textContent =
-            "Mode Scan TRACA : cadre uniquement le code-barres Traca dans le carré.";
+          label.textContent = "Scanner le code-barres Traca.";
         } else if (mode === "DPP") {
-          label.textContent =
-            "Mode Scan DPP : cadre le QR de l’app / DPP. JARVIS pré-remplit flux, famille, sous-famille, poids.";
+          label.textContent = "Scanner le QR du passeport numérique (DPP).";
         }
 
         if (liveScanActive) return;
 
         if (!window.Html5Qrcode) {
           showScanResult(
-            "❌ Librairie de scan non chargée. Vérifie la connexion internet / le script html5-qrcode."
+            "❌ Librairie de scan non chargée. Vérifier la connexion internet / le script html5-qrcode."
           );
           return;
         }
@@ -849,29 +857,23 @@
         liveScanner
           .start(
             { facingMode: "environment" },
-            {
-              fps: 10,
-              qrbox: { width: 250, height: 250 },
-            },
+            { fps: 10, qrbox: { width: 230, height: 230 } },
             (decodedText, decodedResult) => {
               handleLiveScanResult(decodedText);
             },
-            (errorMessage) => {
-              // bruit normal de détection ratée, on ignore
-            }
+            (errorMessage) => {}
           )
           .then(() => {
             liveScanActive = true;
             showScanResult(
               mode === "TRACA"
-                ? "🎥 Scan live TRACA actif. Cadre le code-barres Traca."
-                : "🎥 Scan live DPP actif. Cadre le QR de l’app / DPP."
+                ? "🎥 Scan TRACA actif. Cadrez le code-barres."
+                : "🎥 Scan DPP actif. Cadrez le QR."
             );
           })
           .catch((err) => {
             showScanResult(
-              "❌ Impossible d'accéder à la caméra (permissions ou HTTPS manquant).\nDétail : " +
-                err
+              "❌ Impossible d'accéder à la caméra.\nAutoriser la caméra ou utiliser la fonction Photo."
             );
             container.style.display = "none";
           });
@@ -904,17 +906,12 @@
         const name = (file.name || "").toLowerCase();
 
         if (name.includes("dpp") || name.includes("qr")) {
+          // Simule un contenu DPP JSON pour démo
+          const raw =
+            '{"flux":"GEMF","flux_sous":"GEMHF","famille":"Réfrigérateur / Congélateur","sous_famille":"COMBINÉ RÉFRIGÉRATEUR / CONGÉLATEUR","marque":"SAMSUNG","modele":"RB31FEJNDSA/EF","serie":"SN-DPP-123456789","annee":2018,"poids":65}';
           return {
             type: "DPP_QR",
-            marque: "SAMSUNG",
-            modele: "RB31FEJNDSA/EF",
-            serie: "SN-DPP-123456789",
-            annee: 2018,
-            flux: "GEMF",
-            flux_sous: "GEMHF",
-            famille: "Réfrigérateur / Congélateur",
-            sous_famille: "COMBINÉ RÉFRIGÉRATEUR / CONGÉLATEUR",
-            poids_kg: 65.0,
+            raw: raw,
           };
         }
 
@@ -929,9 +926,10 @@
         const file = evt.target.files[0];
         if (!file) return;
 
-        showScanResult("📤 Photo reçue. Analyse OCR / DPP en cours (mock)...");
+        showScanResult("📤 Photo reçue. Analyse en cours (démo)...");
         document.getElementById("card_produit").style.display = "none";
         hideCreationCard();
+        hideFicheDPP();
 
         setTimeout(() => {
           const res = simulateVisionResult(file);
@@ -942,34 +940,33 @@
               document.getElementById("scan_struct_op").value = res.code_structure_operateur;
             }
             showScanResult(
-              "✅ Code-barres Traca détecté (via photo) : " +
-                res.id_traca +
-                ".\nClique sur « Analyser le numéro » pour interroger la base."
+              "✅ Code-barres Traca détecté à partir de la photo.\nCliquer sur « Vérifier l’ID Traca »."
             );
           } else if (res.type === "DPP_QR") {
             document.getElementById("scan_id_traca").value = "";
 
+            const info = parseDppFromRaw(res.raw);
+            showFicheDPP(info);
+
             document.getElementById("card_creation").style.display = "block";
             ouvrirCreationAuto();
-            document.getElementById("cre_ocr_flux").value = res.flux || "";
-            document.getElementById("cre_ocr_flux_sous").value = res.flux_sous || "";
-            document.getElementById("cre_ocr_famille").value = res.famille || "";
-            document.getElementById("cre_ocr_sous_famille").value = res.sous_famille || "";
-            document.getElementById("cre_ocr_marque").value = res.marque || "";
-            document.getElementById("cre_ocr_modele").value = res.modele || "";
-            document.getElementById("cre_ocr_serie").value = res.serie || "";
-            document.getElementById("cre_ocr_annee").value = res.annee || "";
-            document.getElementById("cre_ocr_poids").value = res.poids_kg ?? "";
+            document.getElementById("cre_ocr_flux").value = info.flux || "";
+            document.getElementById("cre_ocr_flux_sous").value = info.flux_sous || "";
+            document.getElementById("cre_ocr_famille").value = info.famille || "";
+            document.getElementById("cre_ocr_sous_famille").value = info.sous_famille || "";
+            document.getElementById("cre_ocr_marque").value = info.marque || "";
+            document.getElementById("cre_ocr_modele").value = info.modele || "";
+            document.getElementById("cre_ocr_serie").value = info.serie || "";
+            document.getElementById("cre_ocr_annee").value = info.annee || "";
+            document.getElementById("cre_ocr_poids").value = info.poids_kg ?? "";
 
             document.getElementById("card_creation").scrollIntoView({ behavior: "smooth" });
 
             showScanResult(
-              "✅ QR DPP détecté (via photo).\n" +
-                "JARVIS a pré-rempli flux, famille, sous-famille, marque, modèle, poids.\n" +
-                "⚠️ L’ID Traca doit encore être scanné (Scan TRACA) ou saisi, puis analysé."
+              "✅ DPP détecté à partir de la photo.\nLa fiche produit est remplie à partir du JSON simulé."
             );
           }
-        }, 800);
+        }, 700);
       }
 
       function openPhotoPicker() {
@@ -1001,23 +998,24 @@
         const div = document.getElementById("cre_result");
         div.style.display = "block";
 
-        if (!lastScan || lastScan.existe) {
-          div.textContent =
-            "❌ Il faut d'abord analyser un ID Traca inconnu mais créable (bouton « Analyser le numéro »).";
+        const idTraca = document.getElementById("scan_id_traca").value.trim();
+        if (!idTraca) {
+          div.textContent = "❌ Scanner ou saisir un ID Traca avant de valider (AUTO).";
           return;
         }
 
         const pcCode = document.getElementById("cre_point_code").value.trim();
         const pcLib = document.getElementById("cre_point_lib").value.trim();
         if (!pcCode || !pcLib) {
-          div.textContent = "❌ Merci de renseigner le point de collecte (code + libellé).";
+          div.textContent = "❌ Renseigner le point de collecte (code + nom).";
           return;
         }
 
-        const flux = document.getElementById("cre_ocr_flux").value.trim() || "(flux AUTO simulé)";
+        const flux =
+          document.getElementById("cre_ocr_flux").value.trim() || "(flux AUTO simulé)";
         const fluxSous =
           document.getElementById("cre_ocr_flux_sous").value.trim() ||
-          "(sous-famille flux AUTO simulée)";
+          "(sous-flux AUTO simulé)";
         const famille =
           document.getElementById("cre_ocr_famille").value.trim() || "(famille AUTO simulée)";
         const sousFamille =
@@ -1035,19 +1033,15 @@
           document.getElementById("cre_ocr_poids").value.trim() || "(poids AUTO simulé)";
 
         const lignes = [];
-        lignes.push("✅ Création AUTO (mock) enregistrée côté front (sans appel API).");
+        lignes.push("✅ Création AUTO (démo) – données prêtes à envoyer à l’API.");
         lignes.push("");
-        lignes.push("ID traca           : " + (lastScan.id_traca || "(via analyse précédente)"));
-        lignes.push("Point de collecte  : " + pcCode + " – " + pcLib);
-        lignes.push("Flux / sous-flux   : " + flux + " / " + fluxSous);
-        lignes.push("Famille / sous-fam : " + famille + " / " + sousFamille);
-        lignes.push("Marque / modèle    : " + marque + " / " + modele);
-        lignes.push("Série / année      : " + serie + " / " + annee);
-        lignes.push("Poids (kg)         : " + poids);
-        lignes.push("");
-        lignes.push(
-          "Étape suivante JARVIS : envoyer ces données vers l'API /collecte/creer + flux DPP / OCR."
-        );
+        lignes.push("ID Traca          : " + idTraca);
+        lignes.push("Point de collecte : " + pcCode + " – " + pcLib);
+        lignes.push("Flux / Sous-flux  : " + flux + " / " + fluxSous);
+        lignes.push("Famille / Sous-fam: " + famille + " / " + sousFamille);
+        lignes.push("Marque / Modèle   : " + marque + " / " + modele);
+        lignes.push("Série / Année     : " + serie + " / " + annee);
+        lignes.push("Poids (kg)        : " + poids);
 
         div.textContent = lignes.join("\n");
       }
@@ -1056,42 +1050,40 @@
         const div = document.getElementById("cre_result");
         div.style.display = "block";
 
-        if (!lastScan || lastScan.existe) {
-          div.textContent =
-            "❌ Il faut d'abord analyser un ID Traca inconnu mais créable (bouton « Analyser le numéro »).";
+        const idTraca = document.getElementById("scan_id_traca").value.trim();
+        if (!idTraca) {
+          div.textContent = "❌ Scanner ou saisir un ID Traca avant de valider (MANUEL).";
           return;
         }
 
         const pcCode = document.getElementById("cre_point_code").value.trim();
         const pcLib = document.getElementById("cre_point_lib").value.trim();
         if (!pcCode || !pcLib) {
-          div.textContent = "❌ Merci de renseigner le point de collecte (code + libellé).";
+          div.textContent = "❌ Renseigner le point de collecte (code + nom).";
           return;
         }
 
         const flux = document.getElementById("cre_flux").value.trim() || "(flux manuel)";
         const fluxSous =
-          document.getElementById("cre_flux_sous").value.trim() || "(sous-famille flux manuelle)";
+          document.getElementById("cre_flux_sous").value.trim() ||
+          "(sous-flux manuel)";
         const famille =
           document.getElementById("cre_famille").value.trim() || "(famille manuelle)";
         const sousFamille =
-          document.getElementById("cre_sous_famille").value.trim() || "(sous-famille manuelle)";
+          document.getElementById("cre_sous_famille").value.trim() ||
+          "(sous-famille manuelle)";
         const modele = document.getElementById("cre_modele").value.trim() || "(modèle manuel)";
         const poids = document.getElementById("cre_poids").value.trim() || "(poids manuel)";
 
         const lignes = [];
-        lignes.push("✅ Création MANUELLE (mock) enregistrée côté front (sans appel API).");
+        lignes.push("✅ Création MANUELLE (démo) – données prêtes à envoyer à l’API.");
         lignes.push("");
-        lignes.push("ID traca           : " + (lastScan.id_traca || "(via analyse précédente)"));
-        lignes.push("Point de collecte  : " + pcCode + " – " + pcLib);
-        lignes.push("Flux / sous-flux   : " + flux + " / " + fluxSous);
-        lignes.push("Famille / sous-fam : " + famille + " / " + sousFamille);
-        lignes.push("Modèle             : " + modele);
-        lignes.push("Poids (kg)         : " + poids);
-        lignes.push("");
-        lignes.push(
-          "Étape suivante JARVIS : envoyer ces données vers l'API /collecte/creer (mode manuel)."
-        );
+        lignes.push("ID Traca          : " + idTraca);
+        lignes.push("Point de collecte : " + pcCode + " – " + pcLib);
+        lignes.push("Flux / Sous-flux  : " + flux + " / " + fluxSous);
+        lignes.push("Famille / Sous-fam: " + famille + " / " + sousFamille);
+        lignes.push("Modèle            : " + modele);
+        lignes.push("Poids (kg)        : " + poids);
 
         div.textContent = lignes.join("\n");
       }
