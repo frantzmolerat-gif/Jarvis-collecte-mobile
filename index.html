@@ -309,10 +309,10 @@
     </div>
 
     <script>
-      // ⚠️ Mets ici l'URL de ton backend opérationnel
-      // Pour test local : "http://127.0.0.1:8000"
-      // Pour prod (exemple) : "https://jarvis-envie.onrender.com"
-      const API_BASE = "http://127.0.0.1:8000";
+      // 🔴 IMPORTANT :
+      // Sur Netlify / GitHub, on ne peut PAS appeler 127.0.0.1
+      // On pointe donc vers ton backend FastAPI hébergé sur Render.
+      const API_BASE = "https://jarvis-envie.onrender.com";
 
       function getPointCollecte() {
         const sel = document.getElementById("point_collecte_select");
