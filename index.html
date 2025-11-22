@@ -4,6 +4,10 @@
     <meta charset="UTF-8" />
     <title>Jarvis Envie – Collecte produit</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- Librairie de scan QR / code-barres -->
+    <script src="https://unpkg.com/html5-qrcode"></script>
+
     <style>
       :root {
         --envie-vert-fonce: #00463c;
@@ -184,11 +188,55 @@
         margin-top: 0.2rem;
       }
 
-      .tournee-label {
+      .tournee-label,
+      .collecte-label {
         font-size: 0.8rem;
         font-weight: 600;
         color: var(--envie-vert-fonce);
         margin-top: 0.3rem;
+      }
+
+      /* Overlay scanner */
+      #scan_traca_modal {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.85);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+      }
+
+      #scan_traca_modal_inner {
+        background: #000;
+        border-radius: 12px;
+        padding: 0.5rem;
+        max-width: 480px;
+        width: 100%;
+        margin: 0 0.5rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+      }
+
+      #traca_reader {
+        width: 100%;
+      }
+
+      #scan_traca_close {
+        align-self: flex-end;
+        background: #ffffff;
+        color: #000;
+        padding: 0.2rem 0.6rem;
+        border-radius: 999px;
+        border: none;
+        font-size: 0.8rem;
+        cursor: pointer;
+      }
+
+      #scan_traca_info {
+        color: #ffffff;
+        font-size: 0.75rem;
       }
 
       @media (max-width: 700px) {
@@ -230,7 +278,7 @@
 
     <h1>Collecte produit – Page 1</h1>
     <p class="lead">
-      1. Démarrer la tournée du jour<br />
+      1. Démarrer la tournée<br />
       2. Choisir le <strong>point de collecte</strong><br />
       3. Saisir ou scanner l’ID Traca<br />
       4. Créer la fiche si besoin
@@ -249,15 +297,15 @@
           </select>
         </div>
         <div style="display:flex;flex-direction:column;justify-content:flex-end;">
-          <button id="btn_tournee" type="button">🚚 Démarrer / reprendre la tournée</button>
+          <button id="btn_tournee" type="button">🚚 Démarrer la tournée</button>
         </div>
       </div>
       <div id="tournee_label" class="tournee-label">
         Tournée du jour : (non démarrée)
       </div>
       <p class="helper-text">
-        Un numéro de tournée est généré par jour et par structure, et réutilisé à
-        chaque ouverture de Jarvis sur ce téléphone.
+        Une tournée par structure et par jour sur ce téléphone. Le bouton est
+        désactivé après démarrage.
       </p>
     </div>
 
@@ -272,8 +320,11 @@
           AUTRE – Autre point (démo)
         </option>
       </select>
+      <div id="collecte_label" class="collecte-label">
+        Collecte en cours : (aucune)
+      </div>
       <p class="helper-text">
-        Ce point sera enregistré sur la fiche produit créée pour la collecte.
+        Chaque changement de point démarre une nouvelle collecte dans la tournée.
       </p>
     </div>
 
@@ -283,28 +334,18 @@
       <label for="scan_id_traca">ID Traca (12 chiffres ou derniers digits)</label>
       <input id="scan_id_traca" placeholder="ex : 210100001234 ou 1234" />
       <div class="helper-text">
-        Le collecteur peut saisir uniquement les derniers chiffres s’il a choisi sa
-        structure.
+        Saisie possible : 12 chiffres complets ou seulement les derniers (Jarvis
+        reconstruit avec le code structure).
       </div>
 
       <div class="row-buttons">
-        <button id="btn_scan" type="button">✅ Vérifier l’ID dans la base</button>
-        <button id="btn_scan_photo" class="secondary" type="button">
-          📷 Scan auto (ouvrir appareil photo)
+        <button id="btn_scan" type="button">✅ Vérifier (saisie)</button>
+        <button id="btn_scan_traca_live" class="secondary" type="button">
+          📷 Scanner le code Traca
         </button>
       </div>
 
-      <!-- input file caché pour ouvrir la caméra sur mobile -->
-      <input
-        id="scan_photo_input"
-        type="file"
-        accept="image/*"
-        capture="environment"
-        style="display:none;"
-      />
-
       <div id="scan_result" class="result" style="display:none;"></div>
-      <div id="scan_photo_info" class="helper-text" style="display:none;"></div>
     </div>
 
     <!-- 3. Résultat base -->
@@ -365,60 +406,108 @@
       <div id="cre_result" class="result" style="display:none;"></div>
     </div>
 
+    <!-- Overlay scanner Traca -->
+    <div id="scan_traca_modal">
+      <div id="scan_traca_modal_inner">
+        <button id="scan_traca_close">Fermer</button>
+        <div id="scan_traca_info">
+          📷 Pointez le code-barres ou QR contenant le numéro Traca.
+        </div>
+        <div id="traca_reader"></div>
+      </div>
+    </div>
+
     <script>
-      // Backend en ligne
+      // === CONFIG BACKEND ===
       const API_BASE = "https://jarvis-envie.onrender.com";
 
-      // ---------- Tournée du jour (simple, stocké dans le navigateur) ----------
-      function computeTourneeNumero(struct_code) {
-        if (!struct_code) return null;
+      // === ÉTAT GLOBAL SIMPLE (pour toi) ===
+      let currentTourneeNumero = null;
+      let currentCollecteIndex = 0;
+      let currentCollectePointCode = null;
+      let tracaScanner = null; // html5-qrcode scanner
+
+      // ---------- TOURNÉE (localStorage, simple) ----------
+      function getTourneeStorageKey(struct_code) {
         const today = new Date();
         const yyyy = today.getFullYear();
         const mm = String(today.getMonth() + 1).padStart(2, "0");
         const dd = String(today.getDate()).padStart(2, "0");
         const dateKey = `${yyyy}${mm}${dd}`;
-        const storageKey = "jarvis_tournees";
-        let data = {};
-        try {
-          data = JSON.parse(localStorage.getItem(storageKey) || "{}");
-        } catch (e) {
-          data = {};
-        }
-
-        const key = `${struct_code}-${dateKey}`;
-        if (!data[key]) {
-          data[key] = 1;
-        }
-        const rang = data[key];
-        localStorage.setItem(storageKey, JSON.stringify(data));
-
-        const numero = `T-${struct_code}-${dateKey}-${String(rang).padStart(
-          3,
-          "0"
-        )}`;
-        return numero;
+        return `tournee_${struct_code}_${dateKey}`;
       }
 
-      function setTourneeLabel(text) {
-        const el = document.getElementById("tournee_label");
-        el.textContent = "Tournée du jour : " + text;
+      function loadTourneeState() {
+        const struct_op = document.getElementById("scan_struct_op").value.trim();
+        const label = document.getElementById("tournee_label");
+        const btn = document.getElementById("btn_tournee");
+
+        if (!struct_op) {
+          label.textContent = "Tournée du jour : (structure non renseignée)";
+          btn.disabled = true;
+          currentTourneeNumero = null;
+          return;
+        }
+
+        const key = getTourneeStorageKey(struct_op);
+        const stored = localStorage.getItem(key);
+
+        if (stored) {
+          label.textContent = "Tournée du jour : " + stored;
+          btn.textContent = "🚚 Tournée en cours";
+          btn.disabled = true;
+          currentTourneeNumero = stored;
+        } else {
+          label.textContent = "Tournée du jour : (non démarrée)";
+          btn.textContent = "🚚 Démarrer la tournée";
+          btn.disabled = false;
+          currentTourneeNumero = null;
+        }
+
+        // reset collecte
+        currentCollecteIndex = 0;
+        currentCollectePointCode = null;
+        updateCollecteLabel();
       }
 
       function startTournee() {
         const struct_op = document.getElementById("scan_struct_op").value.trim();
+        const label = document.getElementById("tournee_label");
+        const btn = document.getElementById("btn_tournee");
+
         if (!struct_op) {
-          setTourneeLabel("(structure non renseignée)");
+          label.textContent = "Tournée du jour : (structure non renseignée)";
           return;
         }
-        const num = computeTourneeNumero(struct_op);
-        if (num) {
-          setTourneeLabel(num);
-        } else {
-          setTourneeLabel("(erreur génération tournée)");
-        }
+
+        const today = new Date();
+        const yyyy = today.getFullYear();
+        const mm = String(today.getMonth() + 1).padStart(2, "0");
+        const dd = String(today.getDate()).padStart(2, "0");
+        const dateKey = `${yyyy}${mm}${dd}`;
+
+        // simple : 001 pour la journée
+        const numero = `T-${struct_op}-${dateKey}-001`;
+        const key = getTourneeStorageKey(struct_op);
+        localStorage.setItem(key, numero);
+
+        label.textContent = "Tournée du jour : " + numero;
+        btn.textContent = "🚚 Tournée en cours";
+        btn.disabled = true;
+        currentTourneeNumero = numero;
+
+        // reset collecte
+        currentCollecteIndex = 0;
+        currentCollectePointCode = null;
+        updateCollecteLabel();
       }
 
-      // ---------- Point de collecte ----------
+      document
+        .getElementById("scan_struct_op")
+        .addEventListener("change", loadTourneeState);
+      document.getElementById("btn_tournee").addEventListener("click", startTournee);
+
+      // ---------- COLLECTE (simple, côté front) ----------
       function getPointCollecte() {
         const sel = document.getElementById("point_collecte_select");
         const val = sel.value;
@@ -427,6 +516,57 @@
         const lib = opt.getAttribute("data-libelle") || opt.textContent.trim();
         return { code: val, libelle: lib };
       }
+
+      function updateCollecteLabel() {
+        const label = document.getElementById("collecte_label");
+        const pc = getPointCollecte();
+        if (!currentTourneeNumero) {
+          label.textContent =
+            "Collecte en cours : (démarrer la tournée avant de collecter)";
+          return;
+        }
+        if (!pc) {
+          label.textContent = "Collecte en cours : (aucune – choisir un point)";
+          return;
+        }
+        if (!currentCollecteIndex) {
+          label.textContent =
+            "Collecte en cours : (en attente – valider le point de collecte)";
+          return;
+        }
+        const numCollecte = `C-${currentTourneeNumero}-${String(
+          currentCollecteIndex
+        ).padStart(3, "0")}`;
+        label.textContent =
+          "Collecte en cours : " +
+          numCollecte +
+          " – " +
+          pc.code +
+          " – " +
+          pc.libelle;
+      }
+
+      function onPointCollecteChange() {
+        const pc = getPointCollecte();
+        if (!currentTourneeNumero || !pc) {
+          currentCollecteIndex = 0;
+          currentCollectePointCode = null;
+          updateCollecteLabel();
+          return;
+        }
+        // changement de point => nouvelle collecte
+        if (pc.code !== currentCollectePointCode) {
+          currentCollecteIndex += 1;
+          currentCollectePointCode = pc.code;
+        }
+        updateCollecteLabel();
+        // synchro dans le formulaire de création
+        syncPointCollecteToCreation();
+      }
+
+      document
+        .getElementById("point_collecte_select")
+        .addEventListener("change", onPointCollecteChange);
 
       function syncPointCollecteToCreation() {
         const pc = getPointCollecte();
@@ -441,11 +581,7 @@
         libInput.value = pc.libelle;
       }
 
-      document
-        .getElementById("point_collecte_select")
-        .addEventListener("change", syncPointCollecteToCreation);
-
-      // ---------- Affichage helpers ----------
+      // ---------- AFFICHAGE / RESULTATS ----------
       function showScanResult(text) {
         const div = document.getElementById("scan_result");
         div.style.display = "block";
@@ -534,7 +670,7 @@
         div.textContent = lignes.join("\n");
       }
 
-      // ---------- Scan ID (manuel ou partiel) ----------
+      // ---------- SCAN ID (saisie manuelle ou derniers digits) ----------
       async function doScan() {
         const pc = getPointCollecte();
         if (!pc) {
@@ -612,28 +748,103 @@
         }
       }
 
-      // ---------- Bouton Scan photo (ouvre la caméra) ----------
-      function triggerPhotoScan() {
-        const input = document.getElementById("scan_photo_input");
-        input.click();
-      }
+      document.getElementById("btn_scan").addEventListener("click", doScan);
 
-      function handlePhotoChange(evt) {
-        const file = evt.target.files && evt.target.files[0];
-        const info = document.getElementById("scan_photo_info");
-        if (!file) {
-          info.style.display = "none";
-          info.textContent = "";
-          return;
-        }
-        info.style.display = "block";
+      // ---------- SCAN LIVE (vrai scan caméra) ----------
+      function openTracaScanner() {
+        const modal = document.getElementById("scan_traca_modal");
+        const info = document.getElementById("scan_traca_info");
+        modal.style.display = "flex";
         info.textContent =
-          "📷 Photo capturée (" +
-          file.name +
-          "). La lecture automatique du code (OCR / QR / code-barres) sera branchée sur Jarvis dans la prochaine étape.";
+          "📷 Pointez le code-barres / QR contenant le numéro Traca. La lecture est automatique.";
+
+        // On détruit un scanner précédent s'il existe
+        if (tracaScanner) {
+          tracaScanner
+            .clear()
+            .catch(() => {})
+            .finally(() => {
+              tracaScanner = null;
+              startNewScanner();
+            });
+        } else {
+          startNewScanner();
+        }
+
+        function startNewScanner() {
+          const onScanSuccess = (decodedText, decodedResult) => {
+            const txt = (decodedText || "").trim();
+            // On attend un numéro Traca = chiffres uniquement
+            if (!/^\d{1,20}$/.test(txt)) {
+              info.textContent =
+                "⚠️ Code lu : " +
+                txt +
+                " (non reconnu comme numéro Traca, viser le code-barres chiffré).";
+              return; // continue de scanner
+            }
+
+            // On prend au max 12 chiffres (au cas où)
+            let truncated = txt;
+            if (txt.length > 12) {
+              truncated = txt.slice(-12);
+            }
+
+            document.getElementById("scan_id_traca").value = truncated;
+            info.textContent = "✅ Code détecté : " + truncated;
+
+            // Stopper le scanner et fermer l’overlay
+            if (tracaScanner) {
+              tracaScanner
+                .clear()
+                .catch(() => {})
+                .finally(() => {
+                  tracaScanner = null;
+                  modal.style.display = "none";
+                  // On lance la vérification dans la base
+                  doScan();
+                });
+            } else {
+              modal.style.display = "none";
+              doScan();
+            }
+          };
+
+          const onScanFailure = (error) => {
+            // erreurs de lecture fréquentes, on ignore
+          };
+
+          tracaScanner = new Html5QrcodeScanner(
+            "traca_reader",
+            { fps: 10, qrbox: { width: 250, height: 250 } },
+            false
+          );
+          tracaScanner.render(onScanSuccess, onScanFailure);
+        }
       }
 
-      // ---------- Création produit ----------
+      function closeTracaScanner() {
+        const modal = document.getElementById("scan_traca_modal");
+        if (tracaScanner) {
+          tracaScanner
+            .clear()
+            .catch(() => {})
+            .finally(() => {
+              tracaScanner = null;
+              modal.style.display = "none";
+            });
+        } else {
+          modal.style.display = "none";
+        }
+      }
+
+      document
+        .getElementById("btn_scan_traca_live")
+        .addEventListener("click", openTracaScanner);
+      document
+        .getElementById("scan_traca_close")
+        .addEventListener("click", closeTracaScanner);
+
+      // ---------- CRÉATION PRODUIT ----------
       async function doCreate() {
         const pc = getPointCollecte();
         const div = document.getElementById("cre_result");
@@ -752,21 +963,10 @@
         }
       }
 
-      // ---------- Écouteurs ----------
-      document.getElementById("btn_scan").addEventListener("click", doScan);
       document.getElementById("btn_creer").addEventListener("click", doCreate);
-      document
-        .getElementById("btn_scan_photo")
-        .addEventListener("click", triggerPhotoScan);
-      document
-        .getElementById("scan_photo_input")
-        .addEventListener("change", handlePhotoChange);
-      document
-        .getElementById("btn_tournee")
-        .addEventListener("click", startTournee);
 
-      // Au chargement, on peut générer une tournée par défaut
-      startTournee();
+      // ---------- INIT ----------
+      window.addEventListener("load", loadTourneeState);
     </script>
   </body>
 </html>
