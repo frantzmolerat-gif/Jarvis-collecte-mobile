@@ -189,6 +189,18 @@
         gap: 0.75rem;
       }
 
+      .row-photo {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-top: 0.6rem;
+        align-items: center;
+      }
+
+      .row-photo button {
+        margin-top: 0;
+      }
+
       .result {
         margin-top: 0.7rem;
         padding: 0.6rem 0.7rem;
@@ -259,6 +271,15 @@
         button {
           width: 100%;
         }
+
+        .row-photo {
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        .row-photo button {
+          width: 100%;
+        }
       }
 
       /* Confort back office (écran large) */
@@ -295,7 +316,7 @@
       1️⃣ On commence toujours par <strong>l’ID Traca</strong> (scan ou saisie) et la
       <strong>structure opérateur</strong> (site qui scanne).<br />
       2️⃣ Le système indique si le produit existe déjà, et si ta structure a le droit de le créer.<br />
-      3️⃣ Si la création est possible, tu peux choisir entre <strong>mode AUTO (OCR)</strong> et
+      3️⃣ Si la création est possible, tu peux choisir entre <strong>mode AUTO (OCR / DPP)</strong> et
       <strong>mode MANUEL</strong>.
     </p>
 
@@ -307,7 +328,8 @@
           <label for="scan_id_traca">ID Traca (12 chiffres)</label>
           <input id="scan_id_traca" placeholder="ex : 170100000001" />
           <div class="helper-text">
-            Pour les tests : tu peux saisir un ID existant ou un ID factice pour simuler un produit inconnu.
+            Tu peux saisir un ID existant ou factice pour simuler un produit inconnu. L’ID Traca reste la clé
+            obligatoire, même en présence d’un QR DPP.
           </div>
         </div>
         <div>
@@ -318,6 +340,28 @@
           </select>
         </div>
       </div>
+
+      <!-- Zone photo / scan code-barres & QR DPP -->
+      <label style="margin-top:0.9rem;">Photo / scan (code-barres Traca ou QR DPP)</label>
+      <div class="row-photo">
+        <button type="button" id="btn_photo">
+          📸 Prendre une photo (code-barres / QR)
+        </button>
+        <span class="helper-text">
+          Sur smartphone : ouvre l’appareil photo. JARVIS lit soit un
+          <strong>code-barres Traca</strong> (pré-remplit l’ID), soit un <strong>QR DPP</strong> (pré-remplit les
+          données produit, mais l’ID Traca reste à scanner ou saisir).
+        </span>
+      </div>
+      <!-- input fichier caché pour la photo -->
+      <input
+        type="file"
+        id="photo_input"
+        accept="image/*"
+        capture="environment"
+        style="display:none;"
+      />
+
       <button id="btn_scan">🔍 Analyser le numéro</button>
       <div id="scan_result" class="result" style="display:none;"></div>
     </div>
@@ -349,8 +393,8 @@
 
       <h3 style="margin-top:1rem;">Mode de création</h3>
       <p style="font-size:0.8rem;">
-        <span class="pill orange">AUTO (OCR)</span>
-        Utilise l’IA/OCR pour proposer marque / modèle / série / âge.<br />
+        <span class="pill orange">AUTO (OCR / DPP)</span>
+        Utilise l’IA/OCR ou le DPP pour proposer marque / modèle / série / âge.<br />
         <span class="pill gray">MANUEL</span>
         Tu saisis famille, sous-famille, modèle, poids.
       </p>
@@ -394,21 +438,21 @@
 
       <!-- Sous-formulaire AUTO (OCR hybride) -->
       <div id="bloc_cre_auto" style="margin-top:1rem;display:none;">
-        <h3>Création AUTO (OCR – mode hybride)</h3>
+        <h3>Création AUTO (OCR / DPP – mode hybride)</h3>
         <p class="helper-text">
-          Ici, on simulera les données remontées par l’OCR (avant branchement à Odaia / Google Vision).<br />
-          Plus tard : flux réel photo → OCR → JSON → JARVIS.
+          Ici, on simule les données remontées par l’OCR ou le DPP (avant branchement live).<br />
+          Plus tard : flux réel photo → Google Vision / DPP → JSON → JARVIS.
         </p>
-        <label for="cre_ocr_marque">Marque (proposée par OCR)</label>
+        <label for="cre_ocr_marque">Marque (proposée par OCR / DPP)</label>
         <input id="cre_ocr_marque" placeholder="ex : BEKO" />
 
-        <label for="cre_ocr_modele">Modèle (proposé par OCR)</label>
+        <label for="cre_ocr_modele">Modèle (proposé par OCR / DPP)</label>
         <input id="cre_ocr_modele" placeholder="ex : WTE6511B0" />
 
-        <label for="cre_ocr_serie">N° de série (proposé par OCR)</label>
+        <label for="cre_ocr_serie">N° de série (proposé par OCR / DPP)</label>
         <input id="cre_ocr_serie" placeholder="ex : 123456789" />
 
-        <label for="cre_ocr_annee">Année (proposée par OCR)</label>
+        <label for="cre_ocr_annee">Année (proposée par OCR / DPP)</label>
         <input id="cre_ocr_annee" type="number" />
 
         <button class="secondary" id="btn_valider_cre_auto">
@@ -540,7 +584,9 @@
         const struct_op = document.getElementById("scan_struct_op").value.trim();
 
         if (!id_traca) {
-          showScanResult("❌ Merci de saisir un ID traca (12 chiffres).");
+          showScanResult(
+            "❌ Merci de saisir un ID traca (12 chiffres) ou de scanner une photo de code-barres TRACA."
+          );
           document.getElementById("card_produit").style.display = "none";
           hideCreationCard();
           return;
@@ -591,6 +637,78 @@
         }
       }
 
+      // --------- Simulation Vision / DPP à partir de la photo ----------
+      function simulateVisionResult(file) {
+        const name = (file.name || "").toLowerCase();
+
+        // Pour les tests :
+        // - si le nom contient "dpp" ou "qr" -> on simule un QR DPP complet (sans ID Traca)
+        // - sinon -> simple code-barres Traca
+        if (name.includes("dpp") || name.includes("qr")) {
+          return {
+            type: "DPP_QR",
+            // on NE retourne PAS id_traca ici : il doit être scanné ou saisi à part
+            marque: "BEKO",
+            modele: "WTE6511B0",
+            serie: "SN123456789",
+            annee: 2021,
+          };
+        }
+
+        return {
+          type: "TRACA_BARCODE",
+          id_traca: "170100000001",
+          code_structure_operateur: "1701",
+        };
+      }
+
+      function handlePhotoSelected(evt) {
+        const file = evt.target.files[0];
+        if (!file) return;
+
+        showScanResult("📤 Photo reçue. Analyse OCR / DPP en cours (mock)...");
+        document.getElementById("card_produit").style.display = "none";
+        hideCreationCard();
+
+        setTimeout(() => {
+          const res = simulateVisionResult(file);
+
+          if (res.type === "TRACA_BARCODE") {
+            document.getElementById("scan_id_traca").value = res.id_traca;
+            if (res.code_structure_operateur) {
+              document.getElementById("scan_struct_op").value = res.code_structure_operateur;
+            }
+            showScanResult(
+              "✅ Code-barres Traca détecté : " +
+                res.id_traca +
+                ".\nClique sur « Analyser le numéro » pour interroger la base."
+            );
+          } else if (res.type === "DPP_QR") {
+            // On NE remplit PAS l’ID Traca : il reste à scanner ou saisir
+            document.getElementById("scan_id_traca").value = "";
+
+            // Pré-remplir les champs produit (mode AUTO)
+            document.getElementById("card_creation").style.display = "block";
+            ouvrirCreationAuto();
+            document.getElementById("cre_ocr_marque").value = res.marque || "";
+            document.getElementById("cre_ocr_modele").value = res.modele || "";
+            document.getElementById("cre_ocr_serie").value = res.serie || "";
+            document.getElementById("cre_ocr_annee").value = res.annee || "";
+
+            showScanResult(
+              "✅ QR DPP détecté.\n" +
+                "- Données produit pré-remplies en mode AUTO (marque / modèle / série / année).\n" +
+                "⚠️ Merci maintenant de scanner une photo du code-barres TRACA ou de saisir manuellement le numéro dans le champ « ID Traca »,\n" +
+                "puis de cliquer sur « Analyser le numéro »."
+            );
+          }
+        }, 800);
+      }
+
+      function openPhotoPicker() {
+        document.getElementById("photo_input").click();
+      }
+
       // --------- Création AUTO (mock OCR hybride) ----------
       function ouvrirCreationAuto() {
         const bloc = document.getElementById("bloc_cre_auto");
@@ -617,7 +735,8 @@
         div.style.display = "block";
 
         if (!lastScan || lastScan.existe) {
-          div.textContent = "❌ Il faut d'abord scanner un ID inconnu mais créable.";
+          div.textContent =
+            "❌ Il faut d'abord analyser un ID Traca inconnu mais créable (bouton « Analyser le numéro »).";
           return;
         }
 
@@ -629,26 +748,26 @@
         }
 
         const marque =
-          document.getElementById("cre_ocr_marque").value.trim() || "(marque OCR simulée)";
+          document.getElementById("cre_ocr_marque").value.trim() || "(marque OCR / DPP simulée)";
         const modele =
-          document.getElementById("cre_ocr_modele").value.trim() || "(modèle OCR simulé)";
+          document.getElementById("cre_ocr_modele").value.trim() || "(modèle OCR / DPP simulé)";
         const serie =
-          document.getElementById("cre_ocr_serie").value.trim() || "(série OCR simulée)";
+          document.getElementById("cre_ocr_serie").value.trim() || "(série OCR / DPP simulée)";
         const annee =
-          document.getElementById("cre_ocr_annee").value.trim() || "(année OCR simulée)";
+          document.getElementById("cre_ocr_annee").value.trim() || "(année OCR / DPP simulée)";
 
         const lignes = [];
         lignes.push("✅ Création AUTO (mock) enregistrée côté front (sans appel API).");
         lignes.push("");
-        lignes.push("ID traca           : " + lastScan.id_traca);
+        lignes.push("ID traca           : " + (lastScan.id_traca || "(via analyse précédente)"));
         lignes.push("Point de collecte  : " + pcCode + " – " + pcLib);
-        lignes.push("Marque (OCR)       : " + marque);
-        lignes.push("Modèle (OCR)       : " + modele);
-        lignes.push("Série (OCR)        : " + serie);
-        lignes.push("Année (OCR)        : " + annee);
+        lignes.push("Marque (AUTO)      : " + marque);
+        lignes.push("Modèle (AUTO)      : " + modele);
+        lignes.push("Série (AUTO)       : " + serie);
+        lignes.push("Année (AUTO)       : " + annee);
         lignes.push("");
         lignes.push(
-          "Étape suivante JARVIS : envoyer ces données vers l'API /collecte/creer + flux OCR."
+          "Étape suivante JARVIS : envoyer ces données vers l'API /collecte/creer + flux OCR / DPP."
         );
 
         div.textContent = lignes.join("\n");
@@ -659,7 +778,8 @@
         div.style.display = "block";
 
         if (!lastScan || lastScan.existe) {
-          div.textContent = "❌ Il faut d'abord scanner un ID inconnu mais créable.";
+          div.textContent =
+            "❌ Il faut d'abord analyser un ID Traca inconnu mais créable (bouton « Analyser le numéro »).";
           return;
         }
 
@@ -679,7 +799,7 @@
         const lignes = [];
         lignes.push("✅ Création MANUELLE (mock) enregistrée côté front (sans appel API).");
         lignes.push("");
-        lignes.push("ID traca           : " + lastScan.id_traca);
+        lignes.push("ID traca           : " + (lastScan.id_traca || "(via analyse précédente)"));
         lignes.push("Point de collecte  : " + pcCode + " – " + pcLib);
         lignes.push("Famille            : " + famille);
         lignes.push("Sous-famille       : " + sousFamille);
@@ -703,6 +823,10 @@
       document
         .getElementById("btn_valider_cre_manuel")
         .addEventListener("click", mockCreationManuelle);
+      document.getElementById("btn_photo").addEventListener("click", openPhotoPicker);
+      document
+        .getElementById("photo_input")
+        .addEventListener("change", handlePhotoSelected);
     </script>
   </body>
 </html>
