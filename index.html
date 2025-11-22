@@ -2,22 +2,26 @@
 <html lang="fr">
   <head>
     <meta charset="utf-8" />
-    <title>Jarvis – Collecte multi-appareils</title>
+    <title>Jarvis Envie – Collecte multi-appareils</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <style>
       :root {
-        --bg: #f3f4f6;
+        /* Palette Jarvis x Envie */
+        --bg: #f1f5f3;
+        --bg-gradient-top: #e8f5ec;
+        --bg-gradient-bottom: #f1f5f9;
         --card-bg: #ffffff;
-        --accent: #2563eb;
-        --accent-soft: #e0edff;
-        --accent-text: #1d4ed8;
+        --accent: #059669; /* vert Jarvis/Envie */
+        --accent-soft: #dcfce7;
+        --accent-deep: #047857;
+        --accent-text: #065f46;
         --text: #111827;
         --muted: #6b7280;
-        --border: #e5e7eb;
+        --border: #e2e8f0;
         --danger: #b91c1c;
         --radius-lg: 18px;
-        --shadow-soft: 0 12px 30px rgba(15, 23, 42, 0.08);
+        --shadow-soft: 0 14px 30px rgba(15, 23, 42, 0.09);
       }
 
       * {
@@ -28,19 +32,67 @@
         margin: 0;
         font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
           sans-serif;
-        background: var(--bg);
         color: var(--text);
+        background: radial-gradient(circle at top, var(--bg-gradient-top), var(--bg-gradient-bottom));
       }
 
       .app {
-        max-width: 680px;
+        max-width: 700px;
         margin: 0 auto;
         padding: 16px;
       }
 
       header {
-        text-align: center;
         margin-bottom: 14px;
+      }
+
+      .brand-strip {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 8px;
+      }
+
+      .brand-left {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .brand-logo {
+        width: 34px;
+        height: 34px;
+        border-radius: 999px;
+        background: radial-gradient(circle at 30% 20%, #bbf7d0, #22c55e);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #022c22;
+        font-weight: 800;
+        font-size: 16px;
+        box-shadow: 0 8px 18px rgba(22, 163, 74, 0.35);
+      }
+
+      .brand-text-main {
+        font-size: 14px;
+        font-weight: 600;
+      }
+
+      .brand-text-sub {
+        font-size: 11px;
+        color: var(--muted);
+      }
+
+      .brand-pill {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        padding: 4px 9px;
+        border-radius: 999px;
+        border: 1px solid rgba(22, 163, 74, 0.35);
+        background: rgba(240, 253, 244, 0.95);
+        color: var(--accent-text);
       }
 
       header h1 {
@@ -51,18 +103,6 @@
       header .phase {
         font-size: 13px;
         color: var(--muted);
-      }
-
-      .badge {
-        display: inline-block;
-        font-size: 11px;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-        padding: 3px 8px;
-        border-radius: 999px;
-        background: var(--accent-soft);
-        color: var(--accent-text);
-        margin-bottom: 4px;
       }
 
       .card {
@@ -90,7 +130,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        font-weight: 600;
+        font-weight: 700;
         font-size: 15px;
       }
 
@@ -118,6 +158,15 @@
         border-radius: 999px;
         border: 1px solid var(--border);
         font-size: 13px;
+        background: #f9fafb;
+      }
+
+      input[type="text"]:focus,
+      select:focus {
+        outline: none;
+        border-color: var(--accent);
+        box-shadow: 0 0 0 1px rgba(16, 185, 129, 0.2);
+        background: #ffffff;
       }
 
       .row-2 {
@@ -136,9 +185,9 @@
       .scan-btn {
         width: 100%;
         border-radius: 999px;
-        border: 1px solid #bfdbfe;
-        background: #eff6ff;
-        color: #1d4ed8;
+        border: 1px solid rgba(16, 185, 129, 0.45);
+        background: linear-gradient(135deg, #ecfdf5, #dcfce7);
+        color: var(--accent-text);
         font-size: 12px;
         padding: 8px 10px;
         cursor: pointer;
@@ -146,6 +195,7 @@
         align-items: center;
         justify-content: center;
         gap: 4px;
+        font-weight: 500;
       }
 
       .scan-btn:active {
@@ -154,7 +204,7 @@
 
       .upload-zone {
         border-radius: 999px;
-        border: 1px dashed #cbd5f5;
+        border: 1px dashed rgba(148, 163, 184, 0.7);
         background: #f9fafb;
         padding: 9px 12px;
         display: flex;
@@ -208,7 +258,7 @@
         padding: 8px 12px;
         border-radius: 999px;
         border: 1px dashed #9ca3af;
-        background: transparent;
+        background: rgba(248, 250, 252, 0.9);
         color: #4b5563;
         font-size: 12px;
         cursor: pointer;
@@ -217,837 +267,3 @@
       .status-bar {
         margin-top: 8px;
         font-size: 12px;
-        padding: 8px 10px;
-        border-radius: 999px;
-        background: #eff6ff;
-        color: #1d4ed8;
-        border: 1px solid #bfdbfe;
-      }
-
-      .status-bar.error {
-        background: #fef2f2;
-        color: #b91c1c;
-        border-color: #fecaca;
-      }
-
-      .result-box {
-        margin-top: 10px;
-        border-radius: 14px;
-        border: 1px solid var(--border);
-        background: #f9fafb;
-        padding: 10px;
-        font-size: 11px;
-        max-height: 220px;
-        overflow: auto;
-        white-space: pre-wrap;
-      }
-
-      .footer {
-        margin-top: 10px;
-        font-size: 11px;
-        color: var(--muted);
-        text-align: center;
-      }
-
-      .stats-row {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 6px;
-        margin-top: 6px;
-        font-size: 11px;
-      }
-
-      .stat-pill {
-        padding: 4px 8px;
-        border-radius: 999px;
-        border: 1px solid #d1d5db;
-        background: #f9fafb;
-      }
-
-      /* Overlay scanner code-barres */
-      .scanner-overlay {
-        position: fixed;
-        inset: 0;
-        background: rgba(15, 23, 42, 0.8);
-        display: none;
-        align-items: center;
-        justify-content: center;
-        z-index: 9999;
-      }
-
-      .scanner-box {
-        width: 100%;
-        max-width: 420px;
-        background: #020617;
-        border-radius: 18px;
-        padding: 12px;
-        border: 1px solid #1f2937;
-        color: #e5e7eb;
-      }
-
-      .scanner-title {
-        font-size: 14px;
-        font-weight: 600;
-        margin-bottom: 6px;
-      }
-
-      .scanner-help {
-        font-size: 11px;
-        color: #9ca3af;
-        margin-bottom: 6px;
-      }
-
-      .scanner-video-wrapper {
-        border-radius: 14px;
-        overflow: hidden;
-        border: 1px solid #1f2937;
-        background: #000;
-      }
-
-      #scanner-video {
-        width: 100%;
-        display: block;
-      }
-
-      .scanner-actions {
-        margin-top: 8px;
-        display: flex;
-        justify-content: flex-end;
-      }
-
-      .scanner-stop-btn {
-        border-radius: 999px;
-        border: none;
-        padding: 7px 12px;
-        font-size: 12px;
-        background: #f97316;
-        color: #111827;
-        cursor: pointer;
-      }
-
-      /* Signature */
-      .signature-block {
-        margin-top: 10px;
-        border-radius: 14px;
-        border: 1px dashed #d1d5db;
-        background: #f9fafb;
-        padding: 10px;
-      }
-
-      .signature-label {
-        font-size: 12px;
-        font-weight: 600;
-        margin-bottom: 4px;
-      }
-
-      #signature-canvas {
-        width: 100%;
-        height: 160px;
-        background: #ffffff;
-        border-radius: 10px;
-        border: 1px solid #d1d5db;
-        touch-action: none;
-      }
-
-      .signature-actions {
-        margin-top: 6px;
-        display: flex;
-        gap: 8px;
-      }
-
-      .signature-actions button {
-        flex: 1;
-        font-size: 11px;
-        padding: 6px 8px;
-        border-radius: 999px;
-        border: 1px solid #d1d5db;
-        background: #e5e7eb;
-        cursor: pointer;
-      }
-
-      .signature-actions button:active {
-        transform: translateY(1px);
-      }
-
-      @media (max-width: 520px) {
-        .row-2 {
-          grid-template-columns: minmax(0, 1fr);
-        }
-        .id-row {
-          grid-template-columns: minmax(0, 1fr);
-        }
-      }
-    </style>
-  </head>
-
-  <body>
-    <div class="app">
-      <header>
-        <div class="badge">Jarvis – Phase collecte</div>
-        <h1>Jarvis – Collecte multi-appareils</h1>
-        <div class="phase">
-          Lecture Traca obligatoire, 1–3 photos, enchaînement d’appareils et validation
-          finale par la plateforme.
-        </div>
-      </header>
-
-      <!-- Étape 0 : Point de collecte + décompte -->
-      <section class="card">
-        <div class="card-header">
-          <div class="step-number">0</div>
-          <div>
-            <div class="card-title">Point de collecte & décompte</div>
-            <div class="card-sub">
-              Le point de collecte est choisi ou saisi ici. Le décompte se met à jour au
-              fur et à mesure des appareils.
-            </div>
-          </div>
-        </div>
-
-        <div class="row-2">
-          <div>
-            <label for="pc-code">Code point de collecte</label>
-            <input
-              id="pc-code"
-              type="text"
-              placeholder="Ex : PC01, LIEU_C SIERG…"
-            />
-          </div>
-          <div>
-            <label for="pc-lib">Libellé point de collecte</label>
-            <input
-              id="pc-lib"
-              type="text"
-              placeholder="Ex : Boulanger X, Déchetterie Y…"
-            />
-          </div>
-        </div>
-
-        <div class="stats-row">
-          <div class="stat-pill">
-            Total appareils : <span id="count-total">0</span>
-          </div>
-          <div class="stat-pill">
-            GEMF : <span id="count-gemf">0</span>
-          </div>
-          <div class="stat-pill">
-            GEMHF : <span id="count-gemhf">0</span>
-          </div>
-          <div class="stat-pill">
-            PAM : <span id="count-pam">0</span>
-          </div>
-          <div class="stat-pill">
-            Écran : <span id="count-ecran">0</span>
-          </div>
-        </div>
-
-        <div class="help-text">
-          1<sup>er</sup> contrôle des quantités en aveugle : l’opérateur ne voit que les
-          décomptes, sans traitement détaillé.
-        </div>
-      </section>
-
-      <!-- Étape 1 : Appareil en cours -->
-      <section class="card">
-        <div class="card-header">
-          <div class="step-number">1</div>
-          <div>
-            <div class="card-title">Appareil en cours</div>
-            <div class="card-sub">
-              Lecture Traca + photos + catégorie. Puis ajout à la collecte pour passer à
-              l’appareil suivant.
-            </div>
-          </div>
-        </div>
-
-        <div class="id-row">
-          <div>
-            <label for="id-traca">ID Traca (obligatoire)</label>
-            <input
-              id="id-traca"
-              type="text"
-              placeholder="Ex : 210100012345"
-              inputmode="numeric"
-            />
-          </div>
-          <div>
-            <button id="btn-scan-barcode" class="scan-btn">
-              📡 Scanner code-barres / QR
-            </button>
-          </div>
-        </div>
-
-        <div style="margin-top:8px;">
-          <label for="categorie-appareil">Catégorie (flux principal)</label>
-          <select id="categorie-appareil">
-            <option value="">Choisir une catégorie…</option>
-            <option value="GEMF">GEMF – Froid</option>
-            <option value="GEMHF">GEMHF – Gros ménager hors froid</option>
-            <option value="PAM">PAM – Petit appareil ménager</option>
-            <option value="ECRAN">Écran</option>
-          </select>
-        </div>
-
-        <div style="margin-top:8px;">
-          <label>Photos (au choix, 1 à 3)</label>
-
-          <label class="upload-zone">
-            <span>📷 Face appareil</span>
-            <input
-              id="photo-face"
-              type="file"
-              accept="image/*"
-              capture="environment"
-            />
-          </label>
-          <div id="filename-face" class="filename">Face : aucune photo</div>
-
-          <label class="upload-zone">
-            <span>🏷️ Plaque signalétique</span>
-            <input
-              id="photo-plaque"
-              type="file"
-              accept="image/*"
-              capture="environment"
-            />
-          </label>
-          <div id="filename-plaque" class="filename">Plaque : aucune photo</div>
-
-          <label class="upload-zone">
-            <span>📄 Étiquette Traca / code-barres</span>
-            <input
-              id="photo-traca"
-              type="file"
-              accept="image/*"
-              capture="environment"
-            />
-          </label>
-          <div id="filename-traca" class="filename">Traca : aucune photo</div>
-
-          <div class="help-text">
-            L’opérateur prend ce qu’il peut selon le temps et le lieu. Jarvis exploitera
-            ensuite ces éléments en back-office.
-          </div>
-        </div>
-
-        <div style="margin-top:10px;">
-          <button id="btn-add-appareil" class="btn-primary">
-            ➕ Ajouter cet appareil à la collecte (passer au suivant)
-          </button>
-          <button id="btn-reset-appareil" class="btn-secondary">
-            🔁 Réinitialiser l’appareil en cours
-          </button>
-        </div>
-      </section>
-
-      <!-- Étape 2 : Fin de collecte + signature -->
-      <section class="card">
-        <div class="card-header">
-          <div class="step-number">2</div>
-          <div>
-            <div class="card-title">Fin de collecte & validation</div>
-            <div class="card-sub">
-              Quand tous les appareils sont saisis pour ce point de collecte, l’agent de
-              plateforme signe et valide.
-            </div>
-          </div>
-        </div>
-
-        <button id="btn-fin-collecte" class="btn-primary">
-          ✅ Terminer la collecte et passer à la signature
-        </button>
-
-        <div id="signature-container" style="display:none;margin-top:8px;">
-          <div class="signature-block">
-            <div class="signature-label">Signature agent de plateforme</div>
-            <canvas id="signature-canvas"></canvas>
-
-            <div class="signature-actions">
-              <button id="btn-clear-signature">Effacer</button>
-              <button id="btn-validate-send">Valider & envoyer à Jarvis</button>
-            </div>
-
-            <label style="margin-top:6px;">Nom de l’agent</label>
-            <input
-              id="agent-name"
-              type="text"
-              placeholder="Nom / initiales de l’agent"
-            />
-          </div>
-
-          <div id="status" class="status-bar">
-            Prêt à envoyer la collecte (mode démo tant que le backend n’est pas branché).
-          </div>
-
-          <div id="result" class="result-box">
-            Aucun envoi effectué pour le moment.
-          </div>
-        </div>
-      </section>
-
-      <div class="footer">
-        Prototype Jarvis Collecte multi-appareils – lecture Traca + photos + décompte
-        GEMF/GEMHF/PAM/Écran + signature plateforme.
-      </div>
-    </div>
-
-    <!-- OVERLAY SCANNER CODE-BARRES -->
-    <div id="scanner-overlay" class="scanner-overlay">
-      <div class="scanner-box">
-        <div class="scanner-title">Scanner le code-barres / QR Traca</div>
-        <div class="scanner-help">
-          Vise l’étiquette Traca avec la caméra. Le numéro sera rempli automatiquement.
-        </div>
-        <div class="scanner-video-wrapper">
-          <video id="scanner-video" playsinline></video>
-        </div>
-        <div class="scanner-actions">
-          <button id="btn-stop-scan" class="scanner-stop-btn">Arrêter</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Librairie ZXing pour lecture code-barres -->
-    <script src="https://unpkg.com/@zxing/browser@latest"></script>
-
-    <script>
-      // 👉 Point d’entrée backend. Laisser vide = mode démo sans appel réseau.
-      const API_URL = ""; // ex : "https://jarvis-envie.onrender.com/api/collecte/terminer"
-
-      // Point de collecte + stats
-      const pcCodeInput = document.getElementById("pc-code");
-      const pcLibInput = document.getElementById("pc-lib");
-      const countTotalEl = document.getElementById("count-total");
-      const countGEMFEl = document.getElementById("count-gemf");
-      const countGEMHFEl = document.getElementById("count-gemhf");
-      const countPAMEl = document.getElementById("count-pam");
-      const countEcranEl = document.getElementById("count-ecran");
-
-      // Appareil en cours
-      const idTracaInput = document.getElementById("id-traca");
-      const categorieSelect = document.getElementById("categorie-appareil");
-      const fileFace = document.getElementById("photo-face");
-      const filePlaque = document.getElementById("photo-plaque");
-      const fileTraca = document.getElementById("photo-traca");
-      const fnFace = document.getElementById("filename-face");
-      const fnPlaque = document.getElementById("filename-plaque");
-      const fnTraca = document.getElementById("filename-traca");
-      const btnAddAppareil = document.getElementById("btn-add-appareil");
-      const btnResetAppareil = document.getElementById("btn-reset-appareil");
-
-      // Fin collecte / signature
-      const btnFinCollecte = document.getElementById("btn-fin-collecte");
-      const signatureContainer = document.getElementById("signature-container");
-      const signatureCanvas = document.getElementById("signature-canvas");
-      const agentNameInput = document.getElementById("agent-name");
-      const btnClearSignature = document.getElementById("btn-clear-signature");
-      const btnValidateSend = document.getElementById("btn-validate-send");
-      const statusEl = document.getElementById("status");
-      const resultEl = document.getElementById("result");
-
-      // Scanner code-barres
-      const btnScanBarcode = document.getElementById("btn-scan-barcode");
-      const scannerOverlay = document.getElementById("scanner-overlay");
-      const scannerVideo = document.getElementById("scanner-video");
-      const btnStopScan = document.getElementById("btn-stop-scan");
-
-      let barcodeReader = null;
-      let barcodeControls = null;
-
-      // Collecte en mémoire
-      const collecteAppareils = [];
-
-      function fileLabel(input, labelEl, prefix) {
-        const f = input.files[0];
-        if (!f) {
-          labelEl.textContent = prefix + " : aucune photo";
-        } else {
-          const kb = Math.round(f.size / 1024);
-          labelEl.textContent = `${prefix} : ${f.name} (${kb} Ko)`;
-        }
-      }
-
-      fileFace.addEventListener("change", () =>
-        fileLabel(fileFace, fnFace, "Face")
-      );
-      filePlaque.addEventListener("change", () =>
-        fileLabel(filePlaque, fnPlaque, "Plaque")
-      );
-      fileTraca.addEventListener("change", () =>
-        fileLabel(fileTraca, fnTraca, "Traca")
-      );
-
-      function updateStats() {
-        const stats = { GEMF: 0, GEMHF: 0, PAM: 0, ECRAN: 0 };
-        collecteAppareils.forEach((a) => {
-          if (stats[a.categorie] !== undefined) {
-            stats[a.categorie]++;
-          }
-        });
-        const total =
-          stats.GEMF + stats.GEMHF + stats.PAM + stats.ECRAN;
-
-        countTotalEl.textContent = total;
-        countGEMFEl.textContent = stats.GEMF;
-        countGEMHFEl.textContent = stats.GEMHF;
-        countPAMEl.textContent = stats.PAM;
-        countEcranEl.textContent = stats.ECRAN;
-      }
-
-      function resetAppareilFields() {
-        idTracaInput.value = "";
-        categorieSelect.value = "";
-        fileFace.value = "";
-        filePlaque.value = "";
-        fileTraca.value = "";
-        fnFace.textContent = "Face : aucune photo";
-        fnPlaque.textContent = "Plaque : aucune photo";
-        fnTraca.textContent = "Traca : aucune photo";
-      }
-
-      function setStatus(msg, isError) {
-        statusEl.textContent = msg;
-        statusEl.classList.toggle("error", !!isError);
-      }
-
-      // --------- Scanner code-barres / QR ID Traca ----------
-      btnScanBarcode.addEventListener("click", async () => {
-        if (!window.ZXingBrowser) {
-          alert("Librairie ZXing non chargée.");
-          return;
-        }
-
-        scannerOverlay.style.display = "flex";
-        setStatus("Ouverture du scanner code-barres…", false);
-
-        try {
-          barcodeReader = new ZXingBrowser.BrowserMultiFormatReader();
-          const devices =
-            await ZXingBrowser.BrowserCodeReader.listVideoInputDevices();
-
-          const deviceId =
-            (devices[devices.length - 1] && devices[devices.length - 1].deviceId) ||
-            undefined;
-
-          barcodeControls = await barcodeReader.decodeFromVideoDevice(
-            deviceId,
-            scannerVideo,
-            (result, err, controls) => {
-              if (result) {
-                const text = result.getText();
-                idTracaInput.value = text;
-                setStatus("Code-barres / QR scanné : " + text, false);
-                controls.stop();
-                scannerOverlay.style.display = "none";
-              }
-            }
-          );
-        } catch (e) {
-          console.error(e);
-          setStatus("Erreur scanner : " + e.message, true);
-          scannerOverlay.style.display = "none";
-        }
-      });
-
-      btnStopScan.addEventListener("click", () => {
-        if (barcodeControls) {
-          barcodeControls.stop();
-        }
-        scannerOverlay.style.display = "none";
-      });
-
-      // --------- Ajout appareil à la collecte ----------
-      btnAddAppareil.addEventListener("click", () => {
-        const idTraca = idTracaInput.value.trim();
-        const cat = categorieSelect.value;
-
-        if (!idTraca) {
-          alert("ID Traca obligatoire pour ajouter un appareil.");
-          return;
-        }
-        if (!cat) {
-          alert("Merci de choisir la catégorie (GEMF / GEMHF / PAM / Écran).");
-          return;
-        }
-
-        const hasFace = fileFace.files.length > 0;
-        const hasPlaque = filePlaque.files.length > 0;
-        const hasTraca = fileTraca.files.length > 0;
-
-        if (!hasFace && !hasPlaque && !hasTraca) {
-          if (
-            !confirm(
-              "Aucune photo pour cet appareil. Confirmer l’ajout quand même ?"
-            )
-          ) {
-            return;
-          }
-        }
-
-        collecteAppareils.push({
-          id_traca: idTraca,
-          categorie: cat,
-          photos: {
-            face: hasFace ? fileFace.files[0].name : null,
-            plaque: hasPlaque ? filePlaque.files[0].name : null,
-            traca: hasTraca ? fileTraca.files[0].name : null,
-          },
-        });
-
-        updateStats();
-        resetAppareilFields();
-
-        alert("Appareil ajouté à la collecte. Tu peux passer au suivant.");
-      });
-
-      btnResetAppareil.addEventListener("click", () => {
-        if (
-          confirm(
-            "Réinitialiser l’appareil en cours ? Les infos non ajoutées à la collecte seront perdues."
-          )
-        ) {
-          resetAppareilFields();
-        }
-      });
-
-      // --------- Signature (canvas) ----------
-      function resizeSignatureCanvas() {
-        const rect = signatureCanvas.getBoundingClientRect();
-        const ratio = window.devicePixelRatio || 1;
-        signatureCanvas.width = rect.width * ratio;
-        signatureCanvas.height = rect.height * ratio;
-        const ctx = signatureCanvas.getContext("2d");
-        ctx.scale(ratio, ratio);
-        ctx.fillStyle = "#ffffff";
-        ctx.fillRect(0, 0, rect.width, rect.height);
-      }
-
-      let drawing = false;
-      let lastX = 0;
-      let lastY = 0;
-
-      function startDraw(x, y) {
-        drawing = true;
-        lastX = x;
-        lastY = y;
-      }
-
-      function moveDraw(x, y) {
-        if (!drawing) return;
-        const ctx = signatureCanvas.getContext("2d");
-        ctx.strokeStyle = "#111827";
-        ctx.lineWidth = 2;
-        ctx.lineCap = "round";
-        ctx.beginPath();
-        ctx.moveTo(lastX, lastY);
-        ctx.lineTo(x, y);
-        ctx.stroke();
-        lastX = x;
-        lastY = y;
-      }
-
-      function endDraw() {
-        drawing = false;
-      }
-
-      function getCanvasPos(evt) {
-        const rect = signatureCanvas.getBoundingClientRect();
-        if (evt.touches && evt.touches[0]) {
-          return {
-            x: evt.touches[0].clientX - rect.left,
-            y: evt.touches[0].clientY - rect.top,
-          };
-        } else {
-          return {
-            x: evt.clientX - rect.left,
-            y: evt.clientY - rect.top,
-          };
-        }
-      }
-
-      signatureCanvas.addEventListener("mousedown", (e) => {
-        const pos = getCanvasPos(e);
-        startDraw(pos.x, pos.y);
-      });
-      signatureCanvas.addEventListener("mousemove", (e) => {
-        const pos = getCanvasPos(e);
-        moveDraw(pos.x, pos.y);
-      });
-      window.addEventListener("mouseup", endDraw);
-
-      signatureCanvas.addEventListener("touchstart", (e) => {
-        e.preventDefault();
-        const pos = getCanvasPos(e);
-        startDraw(pos.x, pos.y);
-      });
-      signatureCanvas.addEventListener("touchmove", (e) => {
-        e.preventDefault();
-        const pos = getCanvasPos(e);
-        moveDraw(pos.x, pos.y);
-      });
-      signatureCanvas.addEventListener("touchend", (e) => {
-        e.preventDefault();
-        endDraw();
-      });
-
-      btnClearSignature.addEventListener("click", () => {
-        const ctx = signatureCanvas.getContext("2d");
-        const rect = signatureCanvas.getBoundingClientRect();
-        ctx.fillStyle = "#ffffff";
-        ctx.fillRect(0, 0, rect.width, rect.height);
-      });
-
-      // --------- Mode démo : simulation réponse Jarvis ----------
-      function buildDemoResponse(payload, errorMessage) {
-        const now = new Date().toISOString();
-        return {
-          mode_demo: true,
-          message:
-            "Collecte multi-appareils enregistrée en mode démo. Le vrai backend Jarvis pourra traiter ces infos en back-office.",
-        horodatage: now,
-        collecte: payload,
-        erreur_backend: errorMessage || null,
-      };
-    }
-
-    async function appelJarvis(form, payloadForDemo) {
-      if (!API_URL) {
-        await new Promise((r) => setTimeout(r, 800));
-        return buildDemoResponse(
-          payloadForDemo,
-          "Aucun backend configuré (mode démo)."
-        );
-      }
-
-      try {
-        const resp = await fetch(API_URL, {
-          method: "POST",
-          body: form,
-        });
-
-        if (!resp.ok) {
-          let data = null;
-          try {
-            data = await resp.json();
-          } catch (e) {
-            data = null;
-          }
-          throw new Error(
-            "Erreur API HTTP " +
-              resp.status +
-              (data ? " : " + JSON.stringify(data) : "")
-          );
-        }
-
-        const data = await resp.json();
-        return data;
-      } catch (err) {
-        console.error(err);
-        return buildDemoResponse(payloadForDemo, err.message);
-      }
-    }
-
-    // --------- Fin de collecte : affichage bloc signature ----------
-    btnFinCollecte.addEventListener("click", () => {
-      const pcCode = pcCodeInput.value.trim();
-      const pcLib = pcLibInput.value.trim();
-
-      if (collecteAppareils.length === 0) {
-        alert(
-          "Aucun appareil dans la collecte. Ajoute au moins un appareil avant de terminer."
-        );
-        return;
-      }
-
-      if (!pcCode || !pcLib) {
-        alert(
-          "Merci de renseigner le code et le libellé du point de collecte avant la signature."
-        );
-        return;
-      }
-
-      signatureContainer.style.display = "block";
-      setStatus(
-        "Prêt à signer et envoyer (mode démo tant que le backend n’est pas branché).",
-        false
-      );
-      resizeSignatureCanvas();
-      signatureContainer.scrollIntoView({ behavior: "smooth", block: "start" });
-    });
-
-    // --------- Validation + envoi ----------
-    btnValidateSend.addEventListener("click", async () => {
-      const pcCode = pcCodeInput.value.trim();
-      const pcLib = pcLibInput.value.trim();
-
-      if (!pcCode || !pcLib) {
-        alert(
-          "Point de collecte incomplet. Code et libellé sont obligatoires."
-        );
-        return;
-      }
-
-      if (collecteAppareils.length === 0) {
-        alert(
-          "Aucun appareil enregistré dans la collecte. Rien à envoyer."
-        );
-        return;
-      }
-
-      const agentName = agentNameInput.value.trim() || null;
-      const signatureDataUrl = signatureCanvas.toDataURL("image/png");
-
-      // Préparation du FormData pour le backend (même si on est en démo pour l’instant)
-      const form = new FormData();
-      form.append("point_collecte_code", pcCode);
-      form.append("point_collecte_libelle", pcLib);
-      form.append(
-        "collecte_json",
-        JSON.stringify(collecteAppareils)
-      );
-      if (agentName) form.append("agent_nom", agentName);
-      form.append("signature_data_url", signatureDataUrl);
-      form.append("source", "collecte_mobile_multi_appareils");
-      form.append("version_front", "v1_multi_collecte");
-
-      const payloadDemo = {
-        point_collecte: {
-          code: pcCode,
-          libelle: pcLib,
-        },
-        nb_appareils: collecteAppareils.length,
-        appareils: collecteAppareils,
-        agent: {
-          nom: agentName,
-        },
-        signature: signatureDataUrl ? "image_base64 (raccourcie)" : null,
-      };
-
-      setStatus(
-        API_URL
-          ? "Envoi de la collecte multi-appareils à Jarvis…"
-          : "Mode démo : simulation de l’enregistrement Jarvis…",
-        false
-      );
-      resultEl.textContent = "Envoi en cours…";
-
-      const data = await appelJarvis(form, payloadDemo);
-
-      if (data.mode_demo) {
-        setStatus("Collecte simulée (mode démo).", false);
-      } else {
-        setStatus("Collecte enregistrée par le backend Jarvis.", false);
-      }
-
-      resultEl.textContent = JSON.stringify(data, null, 2);
-    });
-
-    // Resize du canvas à l’affichage
-    window.addEventListener("resize", () => {
-      if (signatureContainer.style.display !== "none") {
-        resizeSignatureCanvas();
-      }
-    });
-    </script>
-  </body>
-</html>
