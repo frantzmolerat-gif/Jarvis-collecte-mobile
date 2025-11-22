@@ -207,7 +207,7 @@
     <h1>Collecte produit – Page 1</h1>
     <p class="lead">
       0. Choisir le <strong>point de collecte</strong><br />
-      1. Saisir l’ID Traca<br />
+      1. Saisir l’ID Traca (complet ou derniers digits)<br />
       2. Créer la fiche si besoin
     </p>
 
@@ -232,10 +232,11 @@
       <h2>1. ID Traca</h2>
       <div class="row">
         <div>
-          <label for="scan_id_traca">ID Traca (12 chiffres)</label>
-          <input id="scan_id_traca" placeholder="ex : 170100000001" />
+          <label for="scan_id_traca">ID Traca (12 chiffres ou derniers digits)</label>
+          <input id="scan_id_traca" placeholder="ex : 170100000001 ou 1234" />
           <div class="helper-text">
-            Numéro collé sur le produit (étiquette Traça).
+            Le collecteur peut saisir seulement les derniers chiffres s’il a choisi sa
+            structure.
           </div>
         </div>
         <div>
@@ -243,6 +244,7 @@
           <select id="scan_struct_op">
             <option value="1701">1701 – Envie Drôme Ardèche</option>
             <option value="1001">1001 – Envie Tourcoing</option>
+            <option value="2101">2101 – Envie Amiens</option>
           </select>
         </div>
       </div>
@@ -309,9 +311,7 @@
     </div>
 
     <script>
-      // 🔴 IMPORTANT :
-      // Sur Netlify / GitHub, on ne peut PAS appeler 127.0.0.1
-      // On pointe donc vers ton backend FastAPI hébergé sur Render.
+      // Front en ligne -> on pointe vers ton backend Render
       const API_BASE = "https://jarvis-envie.onrender.com";
 
       function getPointCollecte() {
@@ -428,27 +428,57 @@
         div.textContent = lignes.join("\n");
       }
 
+      // 🔥 Fonction scan SIMPLE : accepte derniers digits et reconstruit l’ID complet
       async function doScan() {
         const pc = getPointCollecte();
         if (!pc) {
-          showScanResult("❌ Choisir d’abord le point de collecte (0).");
+          showScanResult("❌ Choisir d’abord le point de collecte.");
           document.getElementById("card_produit").style.display = "none";
           document.getElementById("card_creation").style.display = "none";
           return;
         }
 
-        const id_traca = document.getElementById("scan_id_traca").value.trim();
+        let saisie = document.getElementById("scan_id_traca").value.trim();
         const struct_op = document.getElementById("scan_struct_op").value.trim();
 
-        if (!id_traca) {
-          showScanResult("❌ Saisir l’ID Traca (12 chiffres).");
+        if (!saisie) {
+          showScanResult(
+            "❌ Saisir l’ID Traca (12 chiffres ou seulement les derniers)."
+          );
           document.getElementById("card_produit").style.display = "none";
           document.getElementById("card_creation").style.display = "none";
           return;
+        }
+
+        if (!/^\d+$/.test(saisie)) {
+          showScanResult("❌ L’ID Traca doit contenir uniquement des chiffres.");
+          document.getElementById("card_produit").style.display = "none";
+          document.getElementById("card_creation").style.display = "none";
+          return;
+        }
+
+        // Si pas 12 chiffres → on fabrique l’ID complet avec la structure (préfixe)
+        let id_traca_final = saisie;
+        if (saisie.length < 12) {
+          if (!/^\d{4}$/.test(struct_op)) {
+            showScanResult(
+              "❌ Pour saisir uniquement les derniers digits, la structure doit être un code à 4 chiffres (ex : 2101)."
+            );
+            document.getElementById("card_produit").style.display = "none";
+            document.getElementById("card_creation").style.display = "none";
+            return;
+          }
+          const prefix = struct_op; // ex : 2101
+          const totalLen = 12;
+          const suffixLen = totalLen - prefix.length; // 8
+          const suffix = saisie.padStart(suffixLen, "0"); // 1234 -> 00001234
+          id_traca_final = prefix + suffix;
         }
 
         showScanResult(
-          "⏳ Vérification dans la base…\nPoint de collecte : " +
+          "⏳ Vérification dans la base…\nID utilisé : " +
+            id_traca_final +
+            "\nPoint de collecte : " +
             pc.code +
             " – " +
             pc.libelle
@@ -461,7 +491,7 @@
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-              id_traca: id_traca,
+              id_traca: id_traca_final,
               code_structure_operateur: struct_op,
             }),
           });
@@ -483,11 +513,13 @@
         div.style.display = "block";
 
         if (!pc) {
-          div.textContent = "❌ Choisir le point de collecte (0) avant de créer.";
+          div.textContent = "❌ Choisir le point de collecte avant de créer.";
           return;
         }
 
-        const id_traca = document.getElementById("scan_id_traca").value.trim();
+        const id_traca_saisi = document
+          .getElementById("scan_id_traca")
+          .value.trim();
         const struct_op = document.getElementById("scan_struct_op").value.trim();
 
         if (!struct_op) {
@@ -503,8 +535,18 @@
           return;
         }
 
+        // On peut aussi reconstruire l'ID ici si besoin
+        let id_traca_final = id_traca_saisi || null;
+        if (id_traca_final && id_traca_final.length < 12) {
+          const prefix = struct_op;
+          const totalLen = 12;
+          const suffixLen = totalLen - prefix.length;
+          const suffix = id_traca_final.padStart(suffixLen, "0");
+          id_traca_final = prefix + suffix;
+        }
+
         const payload = {
-          id_traca: id_traca || null,
+          id_traca: id_traca_final,
           code_structure_operateur: struct_op,
           point_collecte_code: pcCode,
           point_collecte_libelle: pcLib,
